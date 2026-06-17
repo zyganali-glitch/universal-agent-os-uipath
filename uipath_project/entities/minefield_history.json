@@ -1,0 +1,14 @@
+{
+    "EntityName": "MinefieldHistory",
+    "Description": "Records past failures, bugs, and lessons learned. Agents cross-reference this before planning to avoid repeating known mistakes.",
+    "Fields": [
+        { "Name": "Id", "Type": "Guid", "IsPrimaryKey": true },
+        { "Name": "MinefieldId", "Type": "String", "MaxLength": 20, "Required": true, "Description": "e.g. MF-001" },
+        { "Name": "Lesson", "Type": "String", "MaxLength": 2000, "Required": true },
+        { "Name": "Severity", "Type": "String", "MaxLength": 20, "AllowedValues": ["critical", "high", "medium", "low"] },
+        { "Name": "OriginAgent", "Type": "String", "MaxLength": 100, "Description": "Which agent or human reported this" },
+        { "Name": "AffectedModules", "Type": "String", "MaxLength": 1000, "Description": "JSON array of affected file paths or modules" },
+        { "Name": "DateDiscovered", "Type": "DateTime", "Required": true },
+        { "Name": "IsActive", "Type": "Boolean", "Default": true }
+    ]
+}

@@ -1,0 +1,13 @@
+{
+    "EntityName": "CodeSoul",
+    "Description": "Stores the architectural rules, coding principles, and forbidden patterns for the target codebase. Agents MUST read this before proposing any implementation plan.",
+    "Fields": [
+        { "Name": "Id", "Type": "Guid", "IsPrimaryKey": true },
+        { "Name": "ProjectName", "Type": "String", "MaxLength": 200, "Required": true },
+        { "Name": "Architecture", "Type": "String", "MaxLength": 500, "Description": "e.g. Microservices on Kubernetes" },
+        { "Name": "Principles", "Type": "String", "MaxLength": 4000, "Description": "JSON array of architectural principles the agent must follow" },
+        { "Name": "ForbiddenPatterns", "Type": "String", "MaxLength": 2000, "Description": "JSON array of code patterns that are explicitly banned" },
+        { "Name": "LastUpdatedBy", "Type": "String", "MaxLength": 100 },
+        { "Name": "LastUpdatedAt", "Type": "DateTime" }
+    ]
+}

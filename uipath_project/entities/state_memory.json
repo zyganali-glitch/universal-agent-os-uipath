@@ -1,0 +1,14 @@
+{
+    "EntityName": "StateMemory",
+    "Description": "Tracks the current session state, task history, and agent interactions. Provides continuity across sessions.",
+    "Fields": [
+        { "Name": "Id", "Type": "Guid", "IsPrimaryKey": true },
+        { "Name": "SessionCount", "Type": "Integer", "Default": 0 },
+        { "Name": "LastTaskDescription", "Type": "String", "MaxLength": 2000 },
+        { "Name": "LastAgentUsed", "Type": "String", "MaxLength": 100 },
+        { "Name": "LastResult", "Type": "String", "MaxLength": 20, "AllowedValues": ["approved", "rejected", "in_progress"] },
+        { "Name": "TaskHistory", "Type": "String", "MaxLength": 10000, "Description": "JSON array of { task, agent, result, timestamp }" },
+        { "Name": "CreatedAt", "Type": "DateTime" },
+        { "Name": "UpdatedAt", "Type": "DateTime" }
+    ]
+}

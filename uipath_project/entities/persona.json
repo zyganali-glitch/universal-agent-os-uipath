@@ -1,0 +1,15 @@
+{
+    "EntityName": "Persona",
+    "Description": "Stores developer preferences, review strictness, and coding style. Agents adapt their approach based on this profile.",
+    "Fields": [
+        { "Name": "Id", "Type": "Guid", "IsPrimaryKey": true },
+        { "Name": "DeveloperName", "Type": "String", "MaxLength": 200, "Required": true },
+        { "Name": "Role", "Type": "String", "MaxLength": 100, "Description": "e.g. Senior Full-Stack Developer" },
+        { "Name": "PreferredLanguage", "Type": "String", "MaxLength": 50, "Description": "e.g. TypeScript, Python" },
+        { "Name": "PreferredFramework", "Type": "String", "MaxLength": 100, "Description": "e.g. Next.js, FastAPI" },
+        { "Name": "CodingStyle", "Type": "String", "MaxLength": 50, "AllowedValues": ["functional", "object-oriented", "mixed"] },
+        { "Name": "ExperienceLevel", "Type": "String", "MaxLength": 50 },
+        { "Name": "ReviewStrictness", "Type": "String", "MaxLength": 20, "AllowedValues": ["low", "medium", "high"] },
+        { "Name": "UpdatedAt", "Type": "DateTime" }
+    ]
+}

@@ -1,0 +1,35 @@
+sequenceDiagram
+    participant Dev as Developer (User)
+    participant UI as UiPath Apps (Dashboard)
+    participant Maestro as UiPath Maestro (BPMN)
+    participant Agent as Coding Agent (Cursor/Claude)
+    participant Memory as UiPath Data Service (Master Memory)
+    participant Lead as Senior Developer (Human-in-the-loop)
+
+    Dev->>UI: Submit coding task request
+    UI->>Maestro: Trigger BPMN Process (Task: "Feature X")
+    Maestro->>Memory: Retrieve "Code Soul" & "Minefield History"
+    Maestro->>Agent: Assign Phase-0 Alignment Interview
+    
+    rect rgb(240, 248, 255)
+        note right of Maestro: Phase-0 Alignment (Governance)
+        Agent->>Agent: Analyze requirements against Minefield
+        Agent-->>Maestro: Propose Implementation Plan
+    end
+
+    Maestro->>Lead: Create Task in UiPath Action Center
+    Lead->>Lead: Review Plan vs Code Soul
+    
+    alt Plan Rejected
+        Lead-->>Maestro: Reject with feedback
+        Maestro->>Memory: Update Minefield History (Add failed pattern)
+        Maestro->>Agent: Re-assign Phase-0 with new feedback
+    else Plan Approved
+        Lead-->>Maestro: Approve Implementation
+        Maestro->>Agent: Grant execution permission
+        Agent->>Agent: Write Code (Execution Phase)
+        Agent-->>Maestro: Code completion signal
+        Maestro->>Memory: Update State Memory (Task completed)
+    end
+    
+    Maestro-->>UI: Notify Developer (Task Finished)
