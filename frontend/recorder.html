@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Zyganali Ücretsiz Kaydedici</title>
+    <style>
+        body { 
+            background: #0f172a; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            height: 100vh; margin: 0; text-align: center;
+        }
+        .container {
+            background: #1e293b; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid #334155;
+        }
+        h2 { color: #38bdf8; margin-top: 0; }
+        button { 
+            background: #f97316; color: white; border: none; padding: 15px 30px; 
+            font-size: 20px; border-radius: 8px; cursor: pointer; margin: 20px 10px; 
+            font-weight: bold; transition: all 0.2s;
+        }
+        button:hover { transform: scale(1.05); }
+        #startBtn:hover { background: #ea580c; }
+        #stopBtn { background: #ef4444; display: none; }
+        #stopBtn:hover { background: #dc2626; }
+        p { color: #94a3b8; font-size: 16px; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🎥 Zyganali Sınırsız Ekran Kaydedici</h2>
+        <p>1. Chrome sekmesinde animasyon (mockup) sayfasını açıp hazırda beklet.</p>
+        <p>2. Aşağıdan <b>Kayda Başla</b>'ya bas ve açılan pencereden animasyonun olduğu sekmeyi seç.</p>
+        <p>3. Animasyonu oynat, bitince bu sekmeye gelip <b>Kaydı Durdur</b>'a bas.</p>
+        <p><i>(Video "uipath_demo.webm" adıyla anında bilgisayarına iner. YouTube bu formatı kabul eder!)</i></p>
+        
+        <div>
+            <button id="startBtn">🔴 Kayda Başla</button>
+            <button id="stopBtn">⏹️ Kaydı Durdur ve İndir</button>
+        </div>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let recordedChunks = [];
+
+        document.getElementById('startBtn').addEventListener('click', async () => {
+            try {
+                // Sadece ekran (ses yok)
+                const stream = await navigator.mediaDevices.getDisplayMedia({ 
+                    video: { displaySurface: "browser" }, 
+                    audio: false 
+                });
+                
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+                
+                mediaRecorder.ondataavailable = function(e) {
+                    if (e.data.size > 0) {
+                        recordedChunks.push(e.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = function() {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    document.body.appendChild(a);
+                    a.style = 'display: none';
+                    a.href = url;
+                    a.download = 'uipath_demo.webm';
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    recordedChunks = []; // Sıfırla
+                    
+                    document.getElementById('startBtn').style.display = 'inline-block';
+                    document.getElementById('stopBtn').style.display = 'none';
+                };
+
+                mediaRecorder.start();
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('stopBtn').style.display = 'inline-block';
+
+                // Tarayıcıdaki "Paylaşmayı durdur" tuşuna basarsa da kaydı bitir
+                stream.getVideoTracks()[0].onended = function () {
+                    if(mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+                };
+
+            } catch(err) {
+                console.error("Hata: " + err);
+                alert("Ekran seçimi yapılmadı veya iptal edildi.");
+            }
+        });
+
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            if(mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            }
+        });
+    </script>
+</body>
+</html>
