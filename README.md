@@ -11,9 +11,17 @@
 <h3 align="center">Secure Software Development Lifecycle for Autonomous Coding Agents</h3>
 <p align="center"><em>Orchestrated by UiPath Maestro BPMN · Human-in-the-Loop Governance · Collective Memory</em></p>
 
-<p align="center">
-  <strong><a href="https://youtu.be/Y5f5VISnwE4">🎥 Watch the 5-Minute Demo Video on YouTube</a></strong>
-</p>
+## 🎥 Demo Video (Walkthrough Guide)
+
+[![Universal Agent OS Demo](https://img.youtube.com/vi/Y5f5VISnwE4/0.jpg)](https://youtu.be/Y5f5VISnwE4)
+
+Our demo video is a silent screencast. Please read this guide to understand the demonstrated concepts:
+
+* **`0:00 - 0:56` | Offline Dashboard Simulation (The Developer Experience):** We demonstrate our interactive frontend dashboard. A developer assigns a "Stripe payment integration" task to Gemini CLI. We step through the simulated UiPath Maestro BPMN phases. Notice the **Action Center approval gate** modal: the agent cannot execute code until the Lead Developer reviews the proposed plan against the Collective Memory.
+* **`0:57 - 1:29` | Coding Agents Bonus (Dogfooding):** We show the GitLab Web IDE where the **GitLab Duo AI Agent** is actively helping us build the `sync_markdown_to_uipath.py` connector. This proves our claim that we used coding agents to build the governance system itself.
+* **`1:30 - 1:33` | Real UiPath Data Service:** A quick look at our live UiPath Automation Cloud tenant, showing the `MinefieldHistory` entity schema deployed in Data Service.
+* **`1:34 - 1:37` | Real UiPath Studio (BPMN):** A glimpse of the Maestro BPMN process canvas in UiPath Studio.
+* **`1:38 - End` | Repository Overview:** Scrolling through the project README to highlight our open-source, SSDL-focused architecture.
 
 ---
 
@@ -126,17 +134,6 @@ universal-agent-os-uipath/
         └── phase0_alignment_spec.md     # UiPath Maestro implementation notes and task mapping
 ```
 
-## 🎥 Demo Video (Walkthrough Guide)
-
-[![Universal Agent OS Demo](https://img.youtube.com/vi/Y5f5VISnwE4/0.jpg)](https://youtu.be/Y5f5VISnwE4)
-
-Our demo video is a silent screencast. Please read this guide to understand the demonstrated concepts:
-
-* **`0:00 - 0:56` | Offline Dashboard Simulation (The Developer Experience):** We demonstrate our interactive frontend dashboard. A developer assigns a "Stripe payment integration" task to Gemini CLI. We step through the simulated UiPath Maestro BPMN phases. Notice the **Action Center approval gate** modal: the agent cannot execute code until the Lead Developer reviews the proposed plan against the Collective Memory.
-* **`0:57 - 1:29` | Coding Agents Bonus (Dogfooding):** We show the GitLab Web IDE where the **GitLab Duo AI Agent** is actively helping us build the `sync_markdown_to_uipath.py` connector. This proves our claim that we used coding agents to build the governance system itself.
-* **`1:30 - 1:33` | Real UiPath Data Service:** A quick look at our live UiPath Automation Cloud tenant, showing the `MinefieldHistory` entity schema deployed in Data Service.
-* **`1:34 - 1:37` | Real UiPath Studio (BPMN):** A glimpse of the Maestro BPMN process canvas in UiPath Studio.
-* **`1:38 - End` | Repository Overview:** Scrolling through the project README to highlight our open-source, SSDL-focused architecture.
 
 ## 🚀 Setup & Execution
 
