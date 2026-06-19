@@ -142,8 +142,16 @@ To connect to a real UiPath tenant:
 
 *(Below are the artifacts proving the live integration with UiPath Automation Cloud and the Coding Agent IDE)*
 
-**1. UiPath Data Service & Action Center Simulation**
-As an orchestrator, we use Maestro BPMN and Action Center logic. Here is the simulated terminal dashboard from our frontend:
+**1. UiPath Data Service (Central Governance Entity)**
+We use Data Service to store the `MinefieldHistory` and `CodeSoul` rules globally. Here is our live entity configured in the UiPath Automation Cloud Data Fabric:
+![Data Service Entity](docs/data_service.png)
+
+**2. UiPath Maestro BPMN (Process Orchestrator)**
+The entire AI orchestration lifecycle is built around a Maestro BPMN workflow (`Phase-0 Alignment Review`), acting as the enterprise gatekeeper.
+![Maestro BPMN Flow](docs/maestro_flow.png)
+
+**3. UiPath Action Center & Dashboard Simulation**
+For the frontend developer experience, we created an interactive terminal dashboard. In production, this ties into Action Center for human approval:
 ![Agent Dashboard](docs/screenshot1.png)
 
 **2. GitLab Duo / Gemini Building the Connector**
