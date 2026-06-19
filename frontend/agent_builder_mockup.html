@@ -183,6 +183,9 @@
         }
         @keyframes shimmer { 100% { left: 100%; } }
 
+        .btn-launch.ready-for-next { background: var(--accent-green) !important; color: #000 !important; animation: readyPulse 2s infinite; }
+        @keyframes readyPulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+
         /* Memory Cards */
         .memory-mini { display: flex; flex-direction: column; gap: 8px; }
         .memory-item {
@@ -466,10 +469,10 @@
                         </div>
                     </div>
                     <div class="task-input-area">
-                        <textarea id="taskInput" placeholder="Describe the coding task...&#10;&#10;e.g. Add a Stripe payment integration to the checkout backend with idempotent request handling.">Add a Stripe payment integration to the checkout backend with idempotent request handling.</textarea>
+                        <textarea id="taskInput" placeholder="Describe the coding task...&#10;&#10;e.g. Add a Stripe payment integration to the checkout backend with idempotent request handling."></textarea>
                     </div>
                     <br>
-                    <button class="btn-launch" id="launchBtn" onclick="startMaestroProcess()">
+                    <button class="btn-launch" id="launchBtn" onclick="handleMainBtnClick()">
                         <span class="shimmer"></span>
                         Start Maestro Process
                     </button>
@@ -653,6 +656,29 @@ let selectedAgent = 'cursor';
 let isRunning = false;
 let approvalResolver = null;
 let sessionStats = { approved: 0, rejected: 0 };
+let stepResolver = null;
+
+function handleMainBtnClick() {
+    if (!isRunning) {
+        startMaestroProcess();
+    } else if (stepResolver) {
+        const resolve = stepResolver;
+        stepResolver = null;
+        const btn = document.getElementById('launchBtn');
+        btn.innerHTML = '<span class="shimmer"></span>Processing...';
+        btn.classList.remove('ready-for-next');
+        btn.disabled = true;
+        resolve();
+    }
+}
+
+const waitForNextStep = () => {
+    const btn = document.getElementById('launchBtn');
+    btn.innerHTML = 'Next Step ⏭️';
+    btn.classList.add('ready-for-next');
+    btn.disabled = false;
+    return new Promise(r => { stepResolver = r; });
+};
 
 const agentProfiles = {
     cursor: { name: 'Cursor', model: 'Claude 4 Sonnet', emoji: '🖱️' },
@@ -807,7 +833,7 @@ async function startMaestroProcess() {
     log('maestro', `BPMN Process triggered. Job ID: job_${Date.now().toString(36)}`);
     log('maestro', `Selected Agent: <strong>${agent.name}</strong> (${agent.model})`);
     log('maestro', `Task: "${task}"`);
-    await delay(1500);
+    await waitForNextStep();
     setPhase('phase-trigger', 'done');
 
     // Phase 2: Fetch Memory
@@ -825,7 +851,7 @@ async function startMaestroProcess() {
     memoryData.state.last_task = task;
     document.getElementById('stateCount').textContent = memoryData.state.sessions;
     log('memory', 'All 4 Master Memory Files loaded into agent context.');
-    await delay(500);
+    await waitForNextStep();
     setPhase('phase-fetch', 'done');
 
     // Phase 3: Phase-0 Alignment
@@ -850,6 +876,7 @@ async function startMaestroProcess() {
     log('agent', 'Validating against Code Soul architectural principles...');
     await delay(800);
     log('agent', 'Phase-0 Alignment complete. Submitting plan for human review.');
+    await waitForNextStep();
     setPhase('phase-interview', 'done');
 
     // Phase 4: Human Approval (INTERACTIVE)
@@ -879,7 +906,7 @@ async function startMaestroProcess() {
         setPhase('phase-approval', 'done');
         log('human', '✅ Lead Developer <strong>APPROVED</strong> the plan via UiPath Action Center.');
         log('maestro', 'Process <strong>RESUMED</strong>. Granting agent execution rights.');
-        await delay(500);
+        await waitForNextStep();
 
         // Phase 5: Execute
         activateNode('node-execute', 'arrow-4');
@@ -895,6 +922,7 @@ async function startMaestroProcess() {
         log('agent', 'Updated: src/api/routes.ts (added /api/payments endpoint)');
         await delay(500);
         log('agent', 'Code execution complete. All changes committed.');
+        await waitForNextStep();
         setPhase('phase-execute', 'done');
 
         // Phase 6: Save
@@ -905,7 +933,7 @@ async function startMaestroProcess() {
         memoryData.state.history.push({ task: task, agent: agent.name, result: 'approved', timestamp: new Date().toISOString() });
         await delay(600);
         log('memory', 'State Memory updated. Session history saved.');
-        await delay(400);
+        await waitForNextStep();
         setPhase('phase-save', 'done');
         setAgentBadge('COMPLETED', 'var(--accent-green)');
         setGlobalStatus('COMPLETED', false);
