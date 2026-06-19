@@ -29,6 +29,7 @@ class UiPathConfig:
     client_id: str
     client_secret: str
     mock_mode: bool
+    release_key: str = ""
     request_timeout_seconds: int = 30
 
     @classmethod
@@ -41,6 +42,7 @@ class UiPathConfig:
             client_id=os.getenv("UIPATH_CLIENT_ID", "").strip(),
             client_secret=os.getenv("UIPATH_CLIENT_SECRET", "").strip(),
             mock_mode=mock_mode,
+            release_key=os.getenv("UIPATH_RELEASE_KEY", "").strip(),
             request_timeout_seconds=int(os.getenv("UIPATH_TIMEOUT_SECONDS", "30")),
         )
         if not cfg.mock_mode:
@@ -123,7 +125,8 @@ class UiPathMaestroConnector:
                 json=payload,
                 timeout=self.config.request_timeout_seconds,
             )
-            response.raise_for_status()
+            if response.status_code not in (200, 201, 202, 204):
+                raise UiPathApiError(f"UiPath API failed with status {response.status_code}: {response.text}")
             return response.json() if response.content else {}
         except requests.RequestException as exc:
             raise UiPathApiError(f"UiPath API request failed: {url} :: {exc}") from exc
@@ -132,16 +135,6 @@ class UiPathMaestroConnector:
         if not process_name:
             raise ValueError("process_name is required")
 
-        payload = {
-            "startInfo": {
-                "ReleaseKey": process_name,
-                "Strategy": "Specific",
-                "RobotIds": [],
-                "NoOfRobots": 0,
-                "InputArguments": json.dumps(input_args),
-            }
-        }
-
         if self.mock_mode:
             return {
                 "status": "mock_success",
@@ -149,6 +142,39 @@ class UiPathMaestroConnector:
                 "message": "MOCK MODE: Maestro Phase-0 process simulated.",
                 "mock": True,
             }
+
+        # Resolve release key: either from env or dynamically query Releases endpoint
+        release_key = self.config.release_key
+        if not release_key:
+            try:
+                releases_url = f"{self.orchestrator_odata_url.rstrip('/')}/Releases?$filter=ProcessKey eq '{process_name}'"
+                response = requests.get(releases_url, headers=self.headers, timeout=self.config.request_timeout_seconds)
+                if response.status_code == 200:
+                    releases = response.json().get("value", [])
+                    if releases:
+                        release_key = releases[0].get("Key")
+                if not release_key:
+                    raise UiPathConfigurationError(
+                        f"Could not find Release Key for process '{process_name}' in folder '{self.config.organization_unit_id}'. "
+                        "Please configure UIPATH_RELEASE_KEY in .env or grant OR.Releases/OR.Releases.Read scope to the application."
+                    )
+            except Exception as exc:
+                if isinstance(exc, UiPathConfigurationError):
+                    raise
+                raise UiPathConfigurationError(
+                    f"Failed to fetch Release Key dynamically for process '{process_name}': {exc}. "
+                    "Make sure the process is deployed and either UIPATH_RELEASE_KEY is set in .env "
+                    "or OR.Releases scope is granted to the application."
+                ) from exc
+
+        payload = {
+            "startInfo": {
+                "ReleaseKey": release_key,
+                "Strategy": "JobsCount",
+                "JobsCount": 1,
+                "InputArguments": json.dumps(input_args),
+            }
+        }
 
         endpoint = f"{self.orchestrator_odata_url.rstrip('/')}/Jobs/UiPath.Server.Configuration.OData.StartJobs"
         result = self._post(endpoint, payload)

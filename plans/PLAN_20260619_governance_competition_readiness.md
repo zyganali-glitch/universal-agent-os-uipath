@@ -11,30 +11,30 @@ Make the `universal-agent-os-uipath` repo competition-ready for UiPath AgentHack
 ## Tasks
 
 ### Phase 1: Environment & Tooling
-- [ ] Create `.env.example`
-- [ ] Add `pytest>=8.0.0` to `backend/requirements.txt`
-- [ ] Add `.github/workflows/ci.yml`
-- [ ] Create `tests/test_uipath_connector_modes.py`
+- [x] Create `.env.example`
+- [x] Add `pytest>=8.0.0` to `backend/requirements.txt`
+- [x] Add `.github/workflows/ci.yml`
+- [x] Create `tests/test_uipath_connector_modes.py`
 
 ### Phase 2: Strict Real / Mock Mode
-- [ ] Refactor `backend/uipath_api_connector.py` for Strict Real vs Mock mode.
-- [ ] Update `backend/sync_markdown_to_uipath.py` to log mode and handle mock IDs.
+- [x] Refactor `backend/uipath_api_connector.py` for Strict Real vs Mock mode.
+- [x] Update `backend/sync_markdown_to_uipath.py` to log mode and handle mock IDs.
 
 ### Phase 3: Workflow Specification
-- [ ] Delete `uipath_project/workflows/phase0_alignment.xaml` (if exists) or remove references.
-- [ ] Create `uipath_project/workflows/README.md`
-- [ ] Create `uipath_project/workflows/phase0_alignment_spec.md`
-- [ ] Create `uipath_project/workflows/phase0_alignment.bpmn`
+- [x] Delete `uipath_project/workflows/phase0_alignment.xaml` (if exists) or remove references.
+- [x] Create `uipath_project/workflows/README.md`
+- [x] Create `uipath_project/workflows/phase0_alignment_spec.md`
+- [x] Create `uipath_project/workflows/phase0_alignment.bpmn`
 
 ### Phase 4: Documentation & Evidence
-- [ ] Create `docs/evidence_manifest.md`
-- [ ] Create `docs/coding_agents_evidence.md` & `docs/agent_prompt_log_template.md`
-- [ ] Create `docs/demo_transcript.md`
-- [ ] Create `docs/devpost_submission_update.md`
+- [x] Create `docs/evidence_manifest.md`
+- [x] Create `docs/coding_agents_evidence.md` & `docs/agent_prompt_log_template.md`
+- [x] Create `docs/demo_transcript.md`
+- [x] Create `docs/devpost_submission_update.md`
 
 ### Phase 5: UI & README Polishing
-- [ ] Update `frontend/agent_builder_mockup.html` text.
-- [ ] Update `README.md` to reflect strict reality/demo disclosure.
+- [x] Update `frontend/agent_builder_mockup.html` text.
+- [x] Update `README.md` to reflect strict reality/demo disclosure.
 
 ### Phase 6: Final Verification
-- [ ] Run automated tests and pipeline checks locally.
+- [/] Run automated tests and pipeline checks locally.
