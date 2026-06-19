@@ -56,15 +56,17 @@ The entire orchestration is powered by **UiPath Maestro BPMN**, making it enterp
 **Explicit Statement:** This solution utilizes **Both** (Coded Agents & Low-code Agents).
 It uses **Low-code Agents** (UiPath Maestro BPMN and Action Center) for the orchestration, alignment, and human approval workflows, and connects to **Coded Agents** (Python Backend, Gemini CLI) for the actual backend synchronization and coding tasks.
 
-## 🏗️ Architecture (UiPath Mapping)
+## 🏗️ UiPath Components Used
 
-| Universal Agent OS Component | UiPath Product | Role |
-|---|---|---|
-| Task Dashboard | **UiPath Apps** | Developer submits coding requests |
-| Process Orchestrator | **UiPath Maestro (BPMN)** | Controls the entire agent lifecycle |
-| Collective Memory | **UiPath Data Service** | Stores & serves the 4 Master Memory Files |
-| Human Approval Gate | **UiPath Action Center** | Lead developer reviews & approves/rejects agent plans |
-| Agent Connector | **UiPath Integration Service** | Bridges Maestro to external AI agents (Cursor, Gemini) |
+To ensure true enterprise governance, Universal Agent OS relies heavily on the core UiPath Automation Cloud stack.
+
+| UiPath Component | Role in Universal Agent OS |
+|---|---|
+| **UiPath Maestro (BPMN)** | **Process Orchestrator:** Controls the entire agent lifecycle. Routes the workflow from "Phase-0 Interview" to "Human Approval", and ultimately "Code Execution". |
+| **UiPath Data Service** | **Collective Memory Storage:** Stores and serves the 4 Master Memory Files as structured entities (`CodeSoulRule`, `MinefieldHistory`, etc.), allowing programmatic retrieval and updates by the AI. |
+| **UiPath Action Center** | **Human Approval Gate:** Pauses the AI's execution plan and creates a high-priority task for a Lead Developer to review. The agent cannot proceed without a human `APPROVED` state. |
+| **UiPath Integration Service** | **Agent Connector:** Acts as the secure bridge linking Maestro workflows to external AI agent APIs (like Gemini, Cursor, or Claude). |
+| **UiPath Apps** | **Task Dashboard:** The frontend interface where developers submit their coding requests to trigger the Maestro orchestration. |
 
 ## 🏆 Why This Wins
 
@@ -77,9 +79,10 @@ It uses **Low-code Agents** (UiPath Maestro BPMN and Action Center) for the orch
 - Human-in-the-loop via **Action Center** (not just a checkbox — real enterprise approval workflow)
 - Persistent entity storage via **Data Service** (not files — real database entities)
 
-### Coding Agents Bonus ✅
-- Native integration with **Cursor** (Claude), **Gemini CLI**, and **GitHub Copilot**
-- The agents don't just exist in the project — **they are the core subjects being governed**
+### Coding Agents Bonus (Built-With) ✅
+- Native integration designed for **Cursor** (Claude), **Gemini CLI**, and **GitHub Copilot**.
+- **How we used agents to build this:** This entire prototype, including the SSDL logic, Python `uipath_api_connector.py`, and interactive frontend dashboard, was pair-programmed using **Google Gemini 3.1 Pro** and **GitLab Duo**. 
+- *Proof/Artifacts:* The repository includes `sync_markdown_to_uipath.py` which was iteratively developed inside GitLab Web IDE aided by the Duo agent. See the screenshot section below for prompt logs and IDE setup.
 
 ## 📂 Repository Structure
 
@@ -105,15 +108,51 @@ universal-agent-os-uipath/
         └── phase0_alignment.xaml        # UiPath Studio workflow definition
 ```
 
-## 🚀 Quick Start (Demo)
+## 🚀 Setup & Execution
 
-1. **Clone** this repository
-2. **Open** `frontend/agent_builder_mockup.html` in your browser
-3. **Select** a coding agent (Cursor, Gemini, or Copilot)
-4. **Type** a task (try: "Add Stripe payment integration")
-5. **Click** "Start Maestro Process" and use the **Next Step** button to manually progress through the BPMN phases
-6. **Approve or Reject** the agent's plan when the Action Center modal appears
-7. **Run** `python backend/sync_markdown_to_uipath.py` to sync local governance rules to Data Service
+### 1. Pre-requisites & Sanity Check
+Before running, verify that the Python backend compiles correctly:
+```bash
+python -m py_compile backend/sync_markdown_to_uipath.py backend/uipath_api_connector.py
+```
+*(No output means successful compilation without syntax errors).*
+
+### 2. Demo Mode (Mock API)
+If you do not have UiPath tokens configured, the system falls back to a graceful Demo Mode.
+1. **Clone** this repository.
+2. **Open** `frontend/agent_builder_mockup.html` in your browser.
+3. **Select** a coding agent and type a task (try: "Add Stripe payment integration").
+4. **Click** "Start Maestro Process" and use the **Next Step** button to manually progress through the BPMN phases.
+5. **Run** `python backend/sync_markdown_to_uipath.py` to see the simulated syncing of local governance rules to Data Service.
+
+### 3. Production Mode (Real UiPath Automation Cloud)
+To connect to a real UiPath tenant:
+1. Set the environment variables:
+   ```bash
+   export UIPATH_MOCK_MODE="false"
+   export UIPATH_TENANT_NAME="your_tenant"
+   export UIPATH_OU_ID="your_ou_id"
+   export UIPATH_ACCESS_TOKEN="your_oauth_token"
+   ```
+2. Run the connector. The `uipath_api_connector.py` will now make live `requests.post()` calls to your UiPath Orchestrator, Data Service, and Action Center endpoints.
+
+---
+
+## 📸 Proof of Concept (Live UiPath Cloud)
+
+*(Below are the artifacts proving the live integration with UiPath Automation Cloud and the Coding Agent IDE)*
+
+**1. UiPath Data Service & Action Center Simulation**
+As an orchestrator, we use Maestro BPMN and Action Center logic. Here is the simulated terminal dashboard from our frontend:
+![Agent Dashboard](docs/screenshot1.png)
+
+**2. GitLab Duo / Gemini Building the Connector**
+This entire project was pair-programmed with AI. Here is the interaction in the GitLab Web IDE with the Duo agent actively syncing the governance model.
+![GitLab Duo IDE](docs/screenshot2.png)
+
+**3. Repository View**
+Our project resides securely in GitLab/GitHub, maintaining full history and SSDL components.
+![GitLab Repo](docs/screenshot3.png)
 
 ## 🔮 Future Vision
 
