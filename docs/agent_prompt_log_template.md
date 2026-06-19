@@ -1,20 +1,25 @@
-# Agent Prompt Log
+# Agent Prompt Log Template
 
-*Use this template to document real interactions with coding agents during the hackathon.*
+Use this file only if real prompt/session logs are available.
 
-**Agent Used:** [e.g., Cursor, Gemini CLI, GitLab Duo]
-**Date:** YYYY-MM-DD
-**Task:** [Brief description of what you were trying to build]
+## Session 1
 
-## Prompt
-```text
-[Paste your exact prompt here]
-```
+- Agent:
+- Date:
+- Files affected:
+- Prompt:
+- Output summary:
+- Human review decision:
+- Screenshot:
+- Commit:
 
-## Agent Response / Action
-```text
-[Describe or paste the agent's output, code generated, or action taken]
-```
+## Session 2
 
-## Human Intervention / Correction (If Any)
-[Describe if you had to correct the agent, update a rule, or guide it differently. This proves the value of the Universal Agent OS human-in-the-loop concept.]
+- Agent:
+- Date:
+- Files affected:
+- Prompt:
+- Output summary:
+- Human review decision:
+- Screenshot:
+- Commit:

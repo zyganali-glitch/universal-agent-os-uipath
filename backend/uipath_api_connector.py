@@ -63,6 +63,9 @@ class UiPathMaestroConnector:
     def __init__(self, config: Optional[UiPathConfig] = None):
         self.config = config or UiPathConfig.from_env()
         self.base_url = f"https://cloud.uipath.com/{self.config.tenant_name}/DefaultTenant/odata"
+        self.orchestrator_odata_url = os.getenv("UIPATH_ORCHESTRATOR_ODATA_URL", "").strip() or self.base_url
+        self.data_service_api_url = os.getenv("UIPATH_DATA_SERVICE_API_URL", "").strip()
+        self.action_center_odata_url = os.getenv("UIPATH_ACTION_CENTER_ODATA_URL", "").strip() or self.orchestrator_odata_url
         self.headers = {
             "Authorization": f"Bearer {self.config.access_token}",
             "Content-Type": "application/json",
@@ -108,7 +111,7 @@ class UiPathMaestroConnector:
                 "mock": True,
             }
 
-        endpoint = f"{self.base_url}/Jobs/UiPath.Server.Configuration.OData.StartJobs"
+        endpoint = f"{self.orchestrator_odata_url.rstrip('/')}/Jobs/UiPath.Server.Configuration.OData.StartJobs"
         result = self._post(endpoint, payload)
         result["mock"] = False
         return result
@@ -127,7 +130,10 @@ class UiPathMaestroConnector:
                 "mock": True,
             }
 
-        endpoint = f"https://cloud.uipath.com/{self.config.tenant_name}/DataService_/api/v1/{entity_name}"
+        if self.data_service_api_url:
+            endpoint = f"{self.data_service_api_url.rstrip('/')}/{entity_name}"
+        else:
+            endpoint = f"https://cloud.uipath.com/{self.config.tenant_name}/DataService_/api/v1/{entity_name}"
         result = self._post(endpoint, data)
         result["mock"] = False
         return result
@@ -157,7 +163,7 @@ class UiPathMaestroConnector:
                 "message": "MOCK MODE: human approval simulated.",
             }
 
-        endpoint = f"{self.base_url}/FormTasks/UiPath.Server.Configuration.OData.CreateFormTask"
+        endpoint = f"{self.action_center_odata_url.rstrip('/')}/FormTasks/UiPath.Server.Configuration.OData.CreateFormTask"
         result = self._post(endpoint, payload)
         result["mock"] = False
         return result

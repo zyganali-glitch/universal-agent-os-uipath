@@ -70,11 +70,11 @@ The entire orchestration is powered by **UiPath Maestro BPMN**, making it enterp
 
 | Layer | Status | Evidence |
 |---|---|---|
-| UiPath Data Service entity schemas | Implemented in repo | `uipath_project/entities/*.json` |
-| Maestro BPMN process model | Portable BPMN/spec in repo; live cloud flow shown in video/screenshots if available | `uipath_project/workflows/phase0_alignment.bpmn`, `docs/maestro_flow.png` |
-| Python connector | Implemented with Mock and Strict Real modes | `backend/uipath_api_connector.py` |
-| Frontend dashboard | Interactive offline simulation | `frontend/agent_builder_mockup.html` |
-| Action Center approval | Simulated in offline demo; real cloud proof must be shown by screenshot/video if available | `docs/evidence_manifest.md` |
+| UiPath Data Service entity schemas | Implemented in repo | [`uipath_project/entities`](uipath_project/entities) |
+| Maestro BPMN process model | Portable spec | [`uipath_project/workflows/phase0_alignment.bpmn`](uipath_project/workflows/phase0_alignment.bpmn), [`docs/maestro_flow.png`](docs/maestro_flow.png) |
+| Python connector | Implemented with Mock and Strict Real modes | [`backend/uipath_api_connector.py`](backend/uipath_api_connector.py) |
+| Frontend dashboard | Interactive offline simulation | [`frontend/agent_builder_mockup.html`](frontend/agent_builder_mockup.html) |
+| Action Center approval | Simulated in offline demo | [`docs/evidence_manifest.md`](docs/evidence_manifest.md) |
 
 ## 🤖 Agent Type
 **Explicit Statement:** This solution utilizes **Both** (Coded Agents & Low-code Agents).
@@ -161,13 +161,19 @@ To connect to a real UiPath tenant, strict real mode must be enabled. **Strict m
    export UIPATH_OU_ID="your_ou_id"
    export UIPATH_ACCESS_TOKEN="your_oauth_token"
    ```
-2. Run the connector. The `uipath_api_connector.py` will make live `requests.post()` calls to your UiPath Orchestrator, Data Service, and Action Center endpoints.
+2. (Optional) Custom base URLs overrides if using custom cloud/orchestrator deployments:
+   ```bash
+   export UIPATH_ORCHESTRATOR_ODATA_URL="https://your_custom_orchestrator/odata"
+   export UIPATH_DATA_SERVICE_API_URL="https://your_custom_dataservice/api/v1"
+   export UIPATH_ACTION_CENTER_ODATA_URL="https://your_custom_actioncenter/odata"
+   ```
+3. Run the connector. The `uipath_api_connector.py` will make live `requests.post()` calls to your UiPath Orchestrator, Data Service, and Action Center endpoints.
 
 ---
 
 ## 📸 Proof of Concept (Live UiPath Cloud)
 
-*(Below are the artifacts proving the live integration with UiPath Automation Cloud and the Coding Agent IDE)*
+*(Below are the artifacts showing UiPath Labs configuration evidence / screenshot evidence and the Coding Agent IDE)*
 
 **1. UiPath Data Service (Central Governance Entity)**
 We use Data Service to store the `MinefieldHistory` and `CodeSoul` rules globally. Here is our live entity configured in the UiPath Automation Cloud Data Fabric:

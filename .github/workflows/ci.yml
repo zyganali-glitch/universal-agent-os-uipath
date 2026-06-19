@@ -24,7 +24,7 @@ jobs:
 
       - name: Compile backend
         run: |
-          python -m py_compile backend/sync_markdown_to_uipath.py backend/uipath_api_connector.py
+          python -m py_compile backend/sync_markdown_to_uipath.py backend/uipath_api_connector.py backend/labs_smoke_test.py
 
       - name: Run tests
         run: |
@@ -34,10 +34,20 @@ jobs:
         run: |
           test -f README.md
           test -f LICENSE
+          test -f .env.example
           test -f docs/architecture_bpmn.mermaid
           test -f docs/evidence_manifest.md
+          test -f docs/coding_agents_evidence.md
           test -f docs/devpost_submission_update.md
+          test -f docs/demo_transcript.md
+          test -f docs/uipath_labs_real_runbook.md
+          test -f docs/labs_evidence_checklist.md
+          test -f docs/labs/.gitkeep
+          test -f uipath_project/workflows/README.md
+          test -f uipath_project/workflows/phase0_alignment.bpmn
+          test -f uipath_project/workflows/phase0_alignment_spec.md
           test -f uipath_project/entities/code_soul.json
           test -f uipath_project/entities/minefield_history.json
           test -f uipath_project/entities/state_memory.json
           test -f uipath_project/entities/persona.json
+          test -f tests/test_uipath_connector_modes.py

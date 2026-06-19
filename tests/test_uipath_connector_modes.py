@@ -1,19 +1,28 @@
-import os
 import pytest
 
 from backend.uipath_api_connector import (
-    UiPathConfig,
     UiPathMaestroConnector,
     UiPathConfigurationError,
     UiPathApiError,
 )
 
+
 def test_mock_mode_returns_explicit_mock_ids(monkeypatch):
     monkeypatch.setenv("UIPATH_MOCK_MODE", "true")
     connector = UiPathMaestroConnector()
-    result = connector.start_maestro_process("DemoFlow", {"task": "demo"})
-    assert result["mock"] is True
-    assert result["job_id"].startswith("mock_job_")
+
+    job = connector.start_maestro_process("DemoFlow", {"task": "demo"})
+    assert job["mock"] is True
+    assert job["job_id"].startswith("mock_job_")
+
+    approval = connector.request_human_approval("Approve this test plan")
+    assert approval["mock"] is True
+    assert approval["task_id"].startswith("mock_task_")
+
+    memory = connector.update_master_memory("MinefieldHistory", {"lesson": "demo"})
+    assert memory["mock"] is True
+    assert memory["record_id"].startswith("mock_record_")
+
 
 def test_strict_real_mode_requires_env(monkeypatch):
     monkeypatch.setenv("UIPATH_MOCK_MODE", "false")
@@ -24,11 +33,13 @@ def test_strict_real_mode_requires_env(monkeypatch):
     with pytest.raises(UiPathConfigurationError):
         UiPathMaestroConnector()
 
+
 def test_real_mode_never_falls_back_to_mock(monkeypatch):
     monkeypatch.setenv("UIPATH_MOCK_MODE", "false")
     monkeypatch.setenv("UIPATH_TENANT_NAME", "tenant")
     monkeypatch.setenv("UIPATH_OU_ID", "ou")
     monkeypatch.setenv("UIPATH_ACCESS_TOKEN", "token")
+    monkeypatch.setenv("UIPATH_ORCHESTRATOR_ODATA_URL", "https://example.invalid/odata")
 
     connector = UiPathMaestroConnector()
 

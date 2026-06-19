@@ -1,34 +1,107 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Universal Agent OS - Phase-0 Alignment BPMN 2.0 Specification.
+
 This is a portable BPMN representation for repository review.
-It must not be described as a proprietary UiPath export unless replaced by an actual exported artifact.
+It is NOT a proprietary UiPath export unless explicitly replaced by an actual export from UiPath Studio / UiPath Maestro.
+
+Purpose:
+- Model the Track 2 UiPath Maestro BPMN orchestration.
+- Show how humans, agents, APIs, and memory storage are coordinated.
+- Provide a reproducible process definition for UiPath Labs implementation.
 -->
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" targetNamespace="http://uipath.com/maestro/spec">
-  <process id="Phase0AlignmentProcess" isExecutable="true">
-    <startEvent id="StartEvent_TaskSubmitted" name="Task Submitted" />
-    <sequenceFlow id="Flow_1" sourceRef="StartEvent_TaskSubmitted" targetRef="ServiceTask_FetchMasterMemory" />
-    
-    <serviceTask id="ServiceTask_FetchMasterMemory" name="Fetch Master Memory from Data Service" />
-    <sequenceFlow id="Flow_2" sourceRef="ServiceTask_FetchMasterMemory" targetRef="ServiceTask_RunPhase0Alignment" />
-    
-    <serviceTask id="ServiceTask_RunPhase0Alignment" name="Run Phase-0 Alignment (Agent)" />
-    <sequenceFlow id="Flow_3" sourceRef="ServiceTask_RunPhase0Alignment" targetRef="UserTask_ActionCenterReview" />
-    
-    <userTask id="UserTask_ActionCenterReview" name="Action Center Review (Human)" />
-    <sequenceFlow id="Flow_4" sourceRef="UserTask_ActionCenterReview" targetRef="ExclusiveGateway_ApprovalDecision" />
-    
-    <exclusiveGateway id="ExclusiveGateway_ApprovalDecision" name="Approved?" />
-    <sequenceFlow id="Flow_Approved" name="Yes" sourceRef="ExclusiveGateway_ApprovalDecision" targetRef="ServiceTask_GrantExecution" />
-    <sequenceFlow id="Flow_Rejected" name="No" sourceRef="ExclusiveGateway_ApprovalDecision" targetRef="ServiceTask_UpdateMinefieldHistory" />
-    
-    <serviceTask id="ServiceTask_GrantExecution" name="Grant Execution" />
-    <sequenceFlow id="Flow_5" sourceRef="ServiceTask_GrantExecution" targetRef="EndEvent_Approved" />
-    
-    <serviceTask id="ServiceTask_UpdateMinefieldHistory" name="Update Minefield History" />
-    <sequenceFlow id="Flow_6" sourceRef="ServiceTask_UpdateMinefieldHistory" targetRef="EndEvent_Rejected" />
-    
-    <endEvent id="EndEvent_Approved" name="End (Approved)" />
-    <endEvent id="EndEvent_Rejected" name="End (Rejected)" />
-  </process>
-</definitions>
+<bpmn:definitions
+    xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+    xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+    xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+    id="Definitions_UniversalAgentOS"
+    targetNamespace="https://universal-agent-os.local/bpmn">
+
+  <bpmn:process id="Process_Phase0AlignmentReview" name="Universal Agent OS - Phase-0 Alignment Review" isExecutable="true">
+
+    <bpmn:startEvent id="StartEvent_TaskSubmitted" name="Developer submits coding task">
+      <bpmn:outgoing>Flow_Start_To_FetchMemory</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:serviceTask id="ServiceTask_FetchMasterMemory" name="Fetch Master Memory from UiPath Data Service">
+      <bpmn:documentation>
+        Fetch State Memory, Persona, Minefield History and Code Soul records from UiPath Data Service.
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_Start_To_FetchMemory</bpmn:incoming>
+      <bpmn:outgoing>Flow_FetchMemory_To_Phase0</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="ServiceTask_RunPhase0Alignment" name="Run Phase-0 Alignment with coding agent">
+      <bpmn:documentation>
+        Send coding task plus governance memory to selected coding agent. Agent must produce a plan before writing code.
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_FetchMemory_To_Phase0</bpmn:incoming>
+      <bpmn:outgoing>Flow_Phase0_To_HumanReview</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:userTask id="UserTask_ActionCenterReview" name="Human review in Action Center">
+      <bpmn:documentation>
+        Lead Developer reviews agent plan. The agent cannot proceed until approved.
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_Phase0_To_HumanReview</bpmn:incoming>
+      <bpmn:outgoing>Flow_HumanReview_To_Decision</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="ExclusiveGateway_ApprovalDecision" name="Plan approved?">
+      <bpmn:incoming>Flow_HumanReview_To_Decision</bpmn:incoming>
+      <bpmn:outgoing>Flow_Decision_To_GrantExecution</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Decision_To_UpdateMinefield</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:serviceTask id="ServiceTask_GrantExecution" name="Grant execution permission to coding agent">
+      <bpmn:documentation>
+        If approved, Maestro grants execution permission and records the approved plan.
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_Decision_To_GrantExecution</bpmn:incoming>
+      <bpmn:outgoing>Flow_GrantExecution_To_SaveState</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="ServiceTask_SaveStateMemory" name="Save task result to State Memory">
+      <bpmn:documentation>
+        Save approved task execution status and audit metadata to UiPath Data Service.
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_GrantExecution_To_SaveState</bpmn:incoming>
+      <bpmn:outgoing>Flow_SaveState_To_EndApproved</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="ServiceTask_UpdateMinefieldHistory" name="Update Minefield History after rejection">
+      <bpmn:documentation>
+        If rejected, save the rejected pattern or lesson learned to Minefield History.
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_Decision_To_UpdateMinefield</bpmn:incoming>
+      <bpmn:outgoing>Flow_UpdateMinefield_To_EndRejected</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:endEvent id="EndEvent_Approved" name="Approved and execution granted">
+      <bpmn:incoming>Flow_SaveState_To_EndApproved</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:endEvent id="EndEvent_Rejected" name="Rejected and memory updated">
+      <bpmn:incoming>Flow_UpdateMinefield_To_EndRejected</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_Start_To_FetchMemory" sourceRef="StartEvent_TaskSubmitted" targetRef="ServiceTask_FetchMasterMemory" />
+    <bpmn:sequenceFlow id="Flow_FetchMemory_To_Phase0" sourceRef="ServiceTask_FetchMasterMemory" targetRef="ServiceTask_RunPhase0Alignment" />
+    <bpmn:sequenceFlow id="Flow_Phase0_To_HumanReview" sourceRef="ServiceTask_RunPhase0Alignment" targetRef="UserTask_ActionCenterReview" />
+    <bpmn:sequenceFlow id="Flow_HumanReview_To_Decision" sourceRef="UserTask_ActionCenterReview" targetRef="ExclusiveGateway_ApprovalDecision" />
+
+    <bpmn:sequenceFlow id="Flow_Decision_To_GrantExecution" name="Approved" sourceRef="ExclusiveGateway_ApprovalDecision" targetRef="ServiceTask_GrantExecution">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><![CDATA[approved == true]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+
+    <bpmn:sequenceFlow id="Flow_Decision_To_UpdateMinefield" name="Rejected" sourceRef="ExclusiveGateway_ApprovalDecision" targetRef="ServiceTask_UpdateMinefieldHistory">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><![CDATA[approved == false]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+
+    <bpmn:sequenceFlow id="Flow_GrantExecution_To_SaveState" sourceRef="ServiceTask_GrantExecution" targetRef="ServiceTask_SaveStateMemory" />
+    <bpmn:sequenceFlow id="Flow_SaveState_To_EndApproved" sourceRef="ServiceTask_SaveStateMemory" targetRef="EndEvent_Approved" />
+    <bpmn:sequenceFlow id="Flow_UpdateMinefield_To_EndRejected" sourceRef="ServiceTask_UpdateMinefieldHistory" targetRef="EndEvent_Rejected" />
+
+  </bpmn:process>
+</bpmn:definitions>
