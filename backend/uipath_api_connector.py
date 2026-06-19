@@ -5,6 +5,12 @@ from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
 import requests
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 
 
 class UiPathConfigurationError(RuntimeError):
@@ -20,6 +26,8 @@ class UiPathConfig:
     tenant_name: str
     organization_unit_id: str
     access_token: str
+    client_id: str
+    client_secret: str
     mock_mode: bool
     request_timeout_seconds: int = 30
 
@@ -30,6 +38,8 @@ class UiPathConfig:
             tenant_name=os.getenv("UIPATH_TENANT_NAME", "").strip(),
             organization_unit_id=os.getenv("UIPATH_OU_ID", "").strip(),
             access_token=os.getenv("UIPATH_ACCESS_TOKEN", "").strip(),
+            client_id=os.getenv("UIPATH_CLIENT_ID", "").strip(),
+            client_secret=os.getenv("UIPATH_CLIENT_SECRET", "").strip(),
             mock_mode=mock_mode,
             request_timeout_seconds=int(os.getenv("UIPATH_TIMEOUT_SECONDS", "30")),
         )
@@ -39,8 +49,8 @@ class UiPathConfig:
                 missing.append("UIPATH_TENANT_NAME")
             if not cfg.organization_unit_id:
                 missing.append("UIPATH_OU_ID")
-            if not cfg.access_token:
-                missing.append("UIPATH_ACCESS_TOKEN")
+            if not cfg.access_token and (not cfg.client_id or not cfg.client_secret):
+                missing.append("UIPATH_ACCESS_TOKEN (or UIPATH_CLIENT_ID and UIPATH_CLIENT_SECRET)")
             if missing:
                 raise UiPathConfigurationError(
                     "Strict real mode requires these environment variables: "
@@ -66,11 +76,40 @@ class UiPathMaestroConnector:
         self.orchestrator_odata_url = os.getenv("UIPATH_ORCHESTRATOR_ODATA_URL", "").strip() or self.base_url
         self.data_service_api_url = os.getenv("UIPATH_DATA_SERVICE_API_URL", "").strip()
         self.action_center_odata_url = os.getenv("UIPATH_ACTION_CENTER_ODATA_URL", "").strip() or self.orchestrator_odata_url
+        
+        token = self.config.access_token
+        if not self.config.mock_mode and not token and self.config.client_id and self.config.client_secret:
+            token = self._fetch_oauth_token()
+
         self.headers = {
-            "Authorization": f"Bearer {self.config.access_token}",
+            "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
             "X-UIPATH-OrganizationUnitId": self.config.organization_unit_id,
         }
+
+    def _fetch_oauth_token(self) -> str:
+        url = "https://cloud.uipath.com/identity_/connect/token"
+        payload = {
+            "grant_type": "client_credentials",
+            "client_id": self.config.client_id,
+            "client_secret": self.config.client_secret,
+        }
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        try:
+            response = requests.post(
+                url,
+                data=payload,
+                headers=headers,
+                timeout=self.config.request_timeout_seconds
+            )
+            if response.status_code != 200:
+                raise UiPathConfigurationError(f"OAuth failed with status {response.status_code}: {response.text}")
+            res_data = response.json()
+            return res_data.get("access_token", "")
+        except Exception as exc:
+            raise UiPathConfigurationError(f"OAuth authentication failed: {exc}") from exc
 
     @property
     def mock_mode(self) -> bool:

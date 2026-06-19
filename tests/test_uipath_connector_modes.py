@@ -29,6 +29,8 @@ def test_strict_real_mode_requires_env(monkeypatch):
     monkeypatch.delenv("UIPATH_TENANT_NAME", raising=False)
     monkeypatch.delenv("UIPATH_OU_ID", raising=False)
     monkeypatch.delenv("UIPATH_ACCESS_TOKEN", raising=False)
+    monkeypatch.delenv("UIPATH_CLIENT_ID", raising=False)
+    monkeypatch.delenv("UIPATH_CLIENT_SECRET", raising=False)
 
     with pytest.raises(UiPathConfigurationError):
         UiPathMaestroConnector()
