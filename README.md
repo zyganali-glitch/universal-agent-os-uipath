@@ -1,5 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Track-2%20·%20Maestro%20BPMN-FA4616?style=for-the-badge&logo=uipath&logoColor=white" />
+  <img src="https://img.shields.io/badge/Demo%20Mode-Offline%20Mock-orange?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Strict%20Real%20Mode-No%20Mock%20Fallback-red?style=for-the-badge" />
   <img src="https://img.shields.io/badge/UiPath-AgentHack%202026-0066FF?style=for-the-badge&logo=uipath&logoColor=white" />
   <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
@@ -56,6 +58,16 @@ The entire orchestration is powered by **UiPath Maestro BPMN**, making it enterp
 | 💣 **Minefield History** | Past failures & lessons learned | `"Payment gateways MUST be idempotent"` |
 | 📜 **Code Soul** | Architectural principles & forbidden patterns | `"No eval(), no SELECT *, no console.log"` |
 
+## Reality & Demo Mode Disclosure
+
+| Layer | Status | Evidence |
+|---|---|---|
+| UiPath Data Service entity schemas | Implemented in repo | `uipath_project/entities/*.json` |
+| Maestro BPMN process model | Portable BPMN/spec in repo; live cloud flow shown in video/screenshots if available | `uipath_project/workflows/phase0_alignment.bpmn`, `docs/maestro_flow.png` |
+| Python connector | Implemented with Mock and Strict Real modes | `backend/uipath_api_connector.py` |
+| Frontend dashboard | Interactive offline simulation | `frontend/agent_builder_mockup.html` |
+| Action Center approval | Simulated in offline demo; real cloud proof must be shown by screenshot/video if available | `docs/evidence_manifest.md` |
+
 ## 🤖 Agent Type
 **Explicit Statement:** This solution utilizes **Both** (Coded Agents & Low-code Agents).
 It uses **Low-code Agents** (UiPath Maestro BPMN and Action Center) for the orchestration, alignment, and human approval workflows, and connects to **Coded Agents** (Python Backend, Gemini CLI) for the actual backend synchronization and coding tasks.
@@ -86,7 +98,7 @@ To ensure true enterprise governance, Universal Agent OS relies heavily on the c
 ### Coding Agents Bonus (Built-With) ✅
 - Native integration designed for **Cursor** (Claude), **Gemini CLI**, and **GitHub Copilot**.
 - **How we used agents to build this:** This entire prototype, including the SSDL logic, Python `uipath_api_connector.py`, and interactive frontend dashboard, was pair-programmed using **Google Gemini 3.1 Pro** and **GitLab Duo**. 
-- *Proof/Artifacts:* The repository includes `sync_markdown_to_uipath.py` which was iteratively developed inside GitLab Web IDE aided by the Duo agent. See the screenshot section below for prompt logs and IDE setup.
+- *Proof/Artifacts:* See [`docs/coding_agents_evidence.md`](docs/coding_agents_evidence.md) for full documentation of agent contributions, prompt logs, and screenshots.
 
 ## 📂 Repository Structure
 
@@ -109,13 +121,22 @@ universal-agent-os-uipath/
     │   ├── state_memory.json
     │   └── persona.json
     └── workflows/
-        └── phase0_alignment.xaml        # UiPath Studio workflow definition
+        ├── README.md                    # Explanation of BPMN vs proprietary export
+        ├── phase0_alignment.bpmn        # Portable BPMN 2.0 process specification
+        └── phase0_alignment_spec.md     # UiPath Maestro implementation notes and task mapping
 ```
 
-## 🎥 Demo Video
+## 🎥 Demo Video (Walkthrough Guide)
 
 [![Universal Agent OS Demo](https://img.youtube.com/vi/Y5f5VISnwE4/0.jpg)](https://youtu.be/Y5f5VISnwE4)
-*Click the image above to watch the full architecture walkthrough and live Maestro/Data Service integration demo.*
+
+Our demo video is a silent screencast. Please read this guide to understand the demonstrated concepts:
+
+* **`0:00 - 0:56` | Offline Dashboard Simulation (The Developer Experience):** We demonstrate our interactive frontend dashboard. A developer assigns a "Stripe payment integration" task to Gemini CLI. We step through the simulated UiPath Maestro BPMN phases. Notice the **Action Center approval gate** modal: the agent cannot execute code until the Lead Developer reviews the proposed plan against the Collective Memory.
+* **`0:57 - 1:29` | Coding Agents Bonus (Dogfooding):** We show the GitLab Web IDE where the **GitLab Duo AI Agent** is actively helping us build the `sync_markdown_to_uipath.py` connector. This proves our claim that we used coding agents to build the governance system itself.
+* **`1:30 - 1:33` | Real UiPath Data Service:** A quick look at our live UiPath Automation Cloud tenant, showing the `MinefieldHistory` entity schema deployed in Data Service.
+* **`1:34 - 1:37` | Real UiPath Studio (BPMN):** A glimpse of the Maestro BPMN process canvas in UiPath Studio.
+* **`1:38 - End` | Repository Overview:** Scrolling through the project README to highlight our open-source, SSDL-focused architecture.
 
 ## 🚀 Setup & Execution
 
@@ -127,15 +148,15 @@ python -m py_compile backend/sync_markdown_to_uipath.py backend/uipath_api_conne
 *(No output means successful compilation without syntax errors).*
 
 ### 2. Demo Mode (Mock API)
-If you do not have UiPath tokens configured, the system falls back to a graceful Demo Mode.
+If you do not have UiPath tokens configured, the system falls back to a graceful Demo Mode (`UIPATH_MOCK_MODE="true"`).
 1. **Clone** this repository.
 2. **Open** `frontend/agent_builder_mockup.html` in your browser.
 3. **Select** a coding agent and type a task (try: "Add Stripe payment integration").
 4. **Click** "Start Maestro Process" and use the **Next Step** button to manually progress through the BPMN phases.
 5. **Run** `python backend/sync_markdown_to_uipath.py` to see the simulated syncing of local governance rules to Data Service.
 
-### 3. Production Mode (Real UiPath Automation Cloud)
-To connect to a real UiPath tenant:
+### 3. Production Mode (Strict Real UiPath Automation Cloud)
+To connect to a real UiPath tenant, strict real mode must be enabled. **Strict mode never falls back to mock**, and will fail if the environment variables are missing.
 1. Set the environment variables:
    ```bash
    export UIPATH_MOCK_MODE="false"
@@ -143,7 +164,7 @@ To connect to a real UiPath tenant:
    export UIPATH_OU_ID="your_ou_id"
    export UIPATH_ACCESS_TOKEN="your_oauth_token"
    ```
-2. Run the connector. The `uipath_api_connector.py` will now make live `requests.post()` calls to your UiPath Orchestrator, Data Service, and Action Center endpoints.
+2. Run the connector. The `uipath_api_connector.py` will make live `requests.post()` calls to your UiPath Orchestrator, Data Service, and Action Center endpoints.
 
 ---
 
