@@ -9,6 +9,10 @@
 <h3 align="center">Secure Software Development Lifecycle for Autonomous Coding Agents</h3>
 <p align="center"><em>Orchestrated by UiPath Maestro BPMN · Human-in-the-Loop Governance · Collective Memory</em></p>
 
+<p align="center">
+  <strong><a href="https://youtu.be/Y5f5VISnwE4">🎥 Watch the 5-Minute Demo Video on YouTube</a></strong>
+</p>
+
 ---
 
 ## 🎯 The Problem
@@ -107,6 +111,11 @@ universal-agent-os-uipath/
     └── workflows/
         └── phase0_alignment.xaml        # UiPath Studio workflow definition
 ```
+
+## 🎥 Demo Video
+
+[![Universal Agent OS Demo](https://img.youtube.com/vi/Y5f5VISnwE4/0.jpg)](https://youtu.be/Y5f5VISnwE4)
+*Click the image above to watch the full architecture walkthrough and live Maestro/Data Service integration demo.*
 
 ## 🚀 Setup & Execution
 
