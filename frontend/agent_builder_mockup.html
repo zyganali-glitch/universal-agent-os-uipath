@@ -630,7 +630,7 @@
     <div class="modal-overlay" id="approvalModal">
         <div class="modal-box">
             <h3>⚠️ UiPath Action Center</h3>
-            <p class="modal-sub">The coding agent has completed Phase-0 Alignment and submitted a plan. As the Lead Developer, you must approve or reject before code execution begins.</p>
+            <p class="modal-sub">Offline demo simulation of the Action Center approval gate. As the Lead Developer, you must approve or reject before code execution begins.</p>
             <div class="modal-plan" id="modalPlanText"></div>
             <div class="modal-actions">
                 <button class="btn-approve" onclick="handleApproval(true)">✅ Approve Plan</button>
@@ -885,7 +885,7 @@ async function startMaestroProcess() {
     setAgentBadge('WAITING HUMAN', 'var(--accent-yellow)');
     setGlobalStatus('AWAITING APPROVAL', true);
     log('maestro', '🛑 Process <strong>SUSPENDED</strong>. Awaiting human decision via UiPath Action Center.');
-    log('human', 'Task created in Action Center for Lead Developer.');
+    log('human', 'Action Center approval gate simulated in offline dashboard.');
 
     const planHtml = `
         <strong>Agent:</strong> ${agent.name} (${agent.model})<br>
