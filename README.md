@@ -52,6 +52,10 @@ The entire orchestration is powered by **UiPath Maestro BPMN**, making it enterp
 | 💣 **Minefield History** | Past failures & lessons learned | `"Payment gateways MUST be idempotent"` |
 | 📜 **Code Soul** | Architectural principles & forbidden patterns | `"No eval(), no SELECT *, no console.log"` |
 
+## 🤖 Agent Type
+**Explicit Statement:** This solution utilizes **Both** (Coded Agents & Low-code Agents).
+It uses **Low-code Agents** (UiPath Maestro BPMN and Action Center) for the orchestration, alignment, and human approval workflows, and connects to **Coded Agents** (Python Backend, Gemini CLI) for the actual backend synchronization and coding tasks.
+
 ## 🏗️ Architecture (UiPath Mapping)
 
 | Universal Agent OS Component | UiPath Product | Role |
