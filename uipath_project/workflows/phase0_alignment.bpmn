@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Universal Agent OS - Phase-0 Alignment BPMN 2.0 Specification.
+This is a portable BPMN representation for repository review.
+It must not be described as a proprietary UiPath export unless replaced by an actual exported artifact.
+-->
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" targetNamespace="http://uipath.com/maestro/spec">
+  <process id="Phase0AlignmentProcess" isExecutable="true">
+    <startEvent id="StartEvent_TaskSubmitted" name="Task Submitted" />
+    <sequenceFlow id="Flow_1" sourceRef="StartEvent_TaskSubmitted" targetRef="ServiceTask_FetchMasterMemory" />
+    
+    <serviceTask id="ServiceTask_FetchMasterMemory" name="Fetch Master Memory from Data Service" />
+    <sequenceFlow id="Flow_2" sourceRef="ServiceTask_FetchMasterMemory" targetRef="ServiceTask_RunPhase0Alignment" />
+    
+    <serviceTask id="ServiceTask_RunPhase0Alignment" name="Run Phase-0 Alignment (Agent)" />
+    <sequenceFlow id="Flow_3" sourceRef="ServiceTask_RunPhase0Alignment" targetRef="UserTask_ActionCenterReview" />
+    
+    <userTask id="UserTask_ActionCenterReview" name="Action Center Review (Human)" />
+    <sequenceFlow id="Flow_4" sourceRef="UserTask_ActionCenterReview" targetRef="ExclusiveGateway_ApprovalDecision" />
+    
+    <exclusiveGateway id="ExclusiveGateway_ApprovalDecision" name="Approved?" />
+    <sequenceFlow id="Flow_Approved" name="Yes" sourceRef="ExclusiveGateway_ApprovalDecision" targetRef="ServiceTask_GrantExecution" />
+    <sequenceFlow id="Flow_Rejected" name="No" sourceRef="ExclusiveGateway_ApprovalDecision" targetRef="ServiceTask_UpdateMinefieldHistory" />
+    
+    <serviceTask id="ServiceTask_GrantExecution" name="Grant Execution" />
+    <sequenceFlow id="Flow_5" sourceRef="ServiceTask_GrantExecution" targetRef="EndEvent_Approved" />
+    
+    <serviceTask id="ServiceTask_UpdateMinefieldHistory" name="Update Minefield History" />
+    <sequenceFlow id="Flow_6" sourceRef="ServiceTask_UpdateMinefieldHistory" targetRef="EndEvent_Rejected" />
+    
+    <endEvent id="EndEvent_Approved" name="End (Approved)" />
+    <endEvent id="EndEvent_Rejected" name="End (Rejected)" />
+  </process>
+</definitions>
