@@ -82,7 +82,9 @@ The entire orchestration is powered by **UiPath Maestro BPMN**, making it enterp
 ```
 universal-agent-os-uipath/
 ├── README.md                           # You are here
+├── .agent_governance/                  # Physical markdown rules synced from Universal-Agent-OS
 ├── backend/
+│   ├── sync_markdown_to_uipath.py      # Syncs file-based governance to UiPath Data Service
 │   ├── uipath_api_connector.py         # UiPath Orchestrator & Data Service API bridge
 │   └── requirements.txt                # Python dependencies
 ├── frontend/
@@ -105,9 +107,9 @@ universal-agent-os-uipath/
 2. **Open** `frontend/agent_builder_mockup.html` in your browser
 3. **Select** a coding agent (Cursor, Gemini, or Copilot)
 4. **Type** a task (try: "Add Stripe payment integration")
-5. **Watch** the Maestro BPMN orchestration unfold in real-time
+5. **Click** "Start Maestro Process" and use the **Next Step** button to manually progress through the BPMN phases
 6. **Approve or Reject** the agent's plan when the Action Center modal appears
-7. **Observe** how memory updates based on your decision
+7. **Run** `python backend/sync_markdown_to_uipath.py` to sync local governance rules to Data Service
 
 ## 🔮 Future Vision
 
