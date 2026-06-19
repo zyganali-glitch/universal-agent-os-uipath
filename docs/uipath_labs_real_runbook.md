@@ -1,115 +1,111 @@
-# UiPath Labs Real Runbook
+# UiPath Labs Gerçek Kurulum ve Çalıştırma Kılavuzu (Runbook)
 
-## Goal
-Run Universal Agent OS through UiPath Labs / Automation Cloud, not only through the offline dashboard.
+## Hedef
+Universal Agent OS'i sadece yerel (offline) simülasyon olarak değil, UiPath Labs / Automation Cloud üzerinde gerçek ve çalışan bir entegrasyon olarak çalıştırmak.
 
-## Prerequisites
-- UiPath Labs access
-- Tenant / organization details
-- Data Service enabled
-- Maestro BPMN enabled
-- Action Center enabled
-- Access token or integration credentials
-- Python 3.11+
+## Ön Koşullar
+- UiPath Labs / Automation Cloud erişimi (zyganali@gmail.com hesabı ile giriş yapabilirsiniz)
+- Tenant (Kiracı) ve Organizasyon (Organization Unit - OU) bilgileri
+- Data Service modülünün etkin olması
+- Maestro BPMN modülünün etkin olması
+- Action Center (İşlem Merkezi) modülünün etkin olması
+- API erişim anahtarı veya kimlik doğrulama tokenı (Access Token)
+- Python 3.11+ sürümü
 
-## Step 1 — Create Data Service entities
-Use these schemas:
+---
+
+## Adım 1 — Data Service Varlıklarını (Entities) Oluşturma
+UiPath Automation Cloud -> Data Service ekranına gidin ve aşağıdaki şemaları kullanarak tabloları oluşturun:
 - `uipath_project/entities/code_soul.json`
 - `uipath_project/entities/minefield_history.json`
 - `uipath_project/entities/persona.json`
 - `uipath_project/entities/state_memory.json`
 
-Create the entities under your Automation Cloud tenant -> Data Service page, matching the properties and names in the schemas.
+Alan isimlerini ve tiplerini şema dosyalarındaki isimlerle birebir aynı yapmaya dikkat edin.
 
-## Step 2 — Seed memory records
-Create initial records:
-- **CodeSoul:** Add rules like `"No eval() code injection allowed"`, `"Always close files after opening"`.
-- **MinefieldHistory:** Add records for past failures, e.g., `"Idempotency guard required on payments"`.
-- **Persona:** Add a record configuring preference strictness: `"strictness: high"`.
-- **StateMemory:** Initialize with empty or default configuration.
+## Adım 2 — Bellek Kayıtlarını Başlatma (Seed Data)
+Oluşturduğunuz varlıklara örnek kayıtlar ekleyin:
+- **CodeSoul:** `"No eval() code injection allowed"` (eval enjeksiyonuna izin verilmez) gibi kurallar girin.
+- **MinefieldHistory:** `"Idempotency guard required on payments"` (ödemelerde mükerrerlik koruması şarttır) gibi geçmiş hata dersleri ekleyin.
+- **Persona:** Geliştirici tercihlerini belirten bir kayıt girin: `"strictness: high"`.
+- **StateMemory:** Boş veya varsayılan bir oturum kaydı oluşturun.
 
-## Step 3 — Create Maestro BPMN process
-Process name:
+## Adım 3 — Maestro BPMN Sürecini Tasarlama
+UiPath Studio veya Maestro üzerinde şu isimde bir süreç (Process) oluşturun:
 `UniversalAgentOS_Phase0_Flow`
 
-Nodes:
-1. StartEvent_TaskSubmitted
-2. ServiceTask_FetchMasterMemory
-3. ServiceTask_RunPhase0Alignment
-4. UserTask_ActionCenterReview
-5. ExclusiveGateway_ApprovalDecision
-6. ServiceTask_GrantExecution
-7. ServiceTask_SaveStateMemory
-8. ServiceTask_UpdateMinefieldHistory
-9. EndEvent_Approved
-10. EndEvent_Rejected
+Sürece şu düğümleri (nodes) ekleyin ve bağlayın:
+1. **StartEvent_TaskSubmitted** (Geliştirici görev gönderir)
+2. **ServiceTask_FetchMasterMemory** (Data Service'ten bellek kayıtlarını çeker)
+3. **ServiceTask_RunPhase0Alignment** (Kodlama ajanı ile hizalama arayüzünü çalıştırır)
+4. **UserTask_ActionCenterReview** (Action Center üzerinde insan onay bekletmesi)
+5. **ExclusiveGateway_ApprovalDecision** (Onaylandı mı? kararı)
+6. **ServiceTask_GrantExecution** (Onaylandıysa ajana çalıştırma izni verir)
+7. **ServiceTask_SaveStateMemory** (Durum verisini Data Service'e kaydeder)
+8. **ServiceTask_UpdateMinefieldHistory** (Reddedildiyse dersi hata geçmişine ekler)
+9. **EndEvent_Approved** (Onaylı bitiş)
+10. **EndEvent_Rejected** (Reddedilmiş bitiş)
 
-## Step 4 — Connect Action Center
-Create a human approval task named:
+## Adım 4 — Action Center Bağlantısı
+Action Center'da insan onayını yönetecek şu isimde bir form görevi (Form Task) oluşturun:
 `Phase-0 Alignment Review`
 
-Required fields:
-- Agent
-- Requested task
-- Minefield matches
-- Proposed plan
-- Approval decision
-- Reviewer notes
+Form alanları:
+- Agent (Ajan ismi)
+- Requested task (İstenen görev)
+- Minefield matches (Hata eşleşmeleri)
+- Proposed plan (Önerilen plan)
+- Approval decision (Onay kararı)
+- Reviewer notes (İnceleyen notları)
 
-## Step 5 — Configure strict real mode
-Create `.env` from `.env.example`.
+## Adım 5 — Sıkı Gerçek Modu (Strict Real Mode) Yapılandırma
+`.env.example` dosyasını kopyalayarak `.env` dosyası oluşturun.
 
-Required environment variables:
-- `UIPATH_MOCK_MODE=false`
-- `UIPATH_TENANT_NAME`
-- `UIPATH_OU_ID`
-- `UIPATH_ACCESS_TOKEN`
+Aşağıdaki çevre değişkenlerini doldurun:
+- `UIPATH_MOCK_MODE=false` (Sahte mod kapalı, gerçek API çağrıları aktif)
+- `UIPATH_TENANT_NAME` (Tenant adınız)
+- `UIPATH_OU_ID` (Klasör/Organizasyon ID'niz)
+- `UIPATH_ACCESS_TOKEN` (API'den alacağınız token)
 - `UIPATH_TIMEOUT_SECONDS=30`
 
-If endpoint auto-generation does not match the Labs tenant, add full endpoint variables and update connector accordingly:
+Eğer Labs sunucu adresleriniz varsayılan cloud URL'lerinden farklıysa şu geçersiz kılma (override) adreslerini girin:
 - `UIPATH_ORCHESTRATOR_ODATA_URL`
 - `UIPATH_DATA_SERVICE_API_URL`
 - `UIPATH_ACTION_CENTER_ODATA_URL`
 
-## Step 6 — Run smoke test
-Run:
+## Adım 6 — Smoke Testini Çalıştırma
+Aşağıdaki komutları çalıştırarak gerçek entegrasyonu doğrulayın:
 ```bash
 python -m py_compile backend/sync_markdown_to_uipath.py backend/uipath_api_connector.py
-python backend/uipath_api_connector.py
-python backend/sync_markdown_to_uipath.py
+python backend/labs_smoke_test.py
 ```
+*(Bu test token veya hassas bilgileri sızdırmadan sonuçları `run_artifacts/labs_smoke_result.sanitized.json` dosyasına yazacaktır).*
 
-## Step 7 — Capture evidence
-Capture all items listed in `docs/labs_evidence_checklist.md`.
+## Adım 7 — Kanıtları Toplama
+`docs/labs_evidence_checklist.md` dosyasındaki listeyi takip ederek ekran görüntülerini alıp ilgili klasöre yerleştirin.
 
-## How to Record the Hackathon Demo Video (Step-by-Step)
+---
 
-To produce a compelling and honest submission that shows your solution running on UiPath Labs:
+## 🎥 Jüri Demo Videosu Nasıl Çekilir? (Adım Adım Video Rehberi)
 
-1. **Setup & Logging In:**
-   - Log in to your UiPath Automation Cloud using your authorized credentials.
-   - Show your Organization and Tenant dashboard to establish that this is a real UiPath cloud instance.
-2. **Data Service Verification (0:00 - 1:00):**
-   - Navigate to the **Data Service** tab.
-   - Show the created entities (`CodeSoulRule`, `MinefieldHistory`, etc.) and show the records seeded inside. Highlight the severity column and rules schemas.
-3. **Maestro BPMN Design (1:00 - 2:00):**
-   - Open **UiPath Studio** or the Maestro canvas.
-   - Briefly explain the node transitions of `UniversalAgentOS_Phase0_Flow` (Fetch Memory -> Agent Phase-0 -> Action Center human gateway).
-4. **Trigger & Execution (2:00 - 3:30):**
-   - Submit a task from the developer dashboard or run `python backend/labs_smoke_test.py` with `UIPATH_MOCK_MODE=false` to execute in strict real mode.
-   - Show the terminal or application log indicating the API requests being sent live.
-5. **Action Center Gate (3:30 - 4:30):**
-   - Go to **Action Center** in Automation Cloud.
-   - Click on the newly created task: `Phase-0 Alignment Review`. Show the form containing the agent's proposed plan.
-   - Click **Approve**. Explain that the agent is blocked and cannot write any code until this human gate is cleared.
-6. **Data Service Audit Persistence (4:30 - 5:00):**
-   - Go back to Data Service and show that the status has updated to `Approved` or that a new entry was appended to the history ledger.
-   - Wrap up by showing the GitHub repository.
+Jürinin projenin sadece yerel bir mock değil, gerçek bir UiPath çözümü olduğunu anlaması için videoda şu adımları izleyin:
 
-## Failure handling
-
-If strict real mode fails:
-- Do not silently fall back to mock.
-- Record the error.
-- Fix credentials/endpoints.
-- Only mark real evidence as verified after a successful Labs run.
+1. **Giriş ve Bulut Arayüzü (0:00 - 1:00):**
+   - zyganali@gmail.com hesabınız ile **UiPath Automation Cloud**'a giriş yapın.
+   - Kiracı (Tenant) ana sayfanızı göstererek gerçek bir bulut ortamında olduğunuzu kanıtlayın.
+2. **Data Service Kayıtları (1:00 - 2:00):**
+   - **Data Service** sekmesine gidin.
+   - Oluşturduğunuz `CodeSoulRule` ve `MinefieldHistory` tablolarını gösterin. İçindeki kayıtları (örneğin Stripe ödeme kurallarını) göstererek belleğin veritabanında saklandığını gösterin.
+3. **BPMN Süreç Tasarımı (2:00 - 3:00):**
+   - **UiPath Studio**'yu veya Maestro süreç ekranını açın.
+   - `UniversalAgentOS_Phase0_Flow` iş akışını (BPMN şemasını) gösterin. Sürecin insan onay kutusuna (Action Center) nasıl yönlendiğini şema üzerinden anlatın.
+4. **Çalıştırma ve Tetikleme (3:00 - 4:00):**
+   - Yerel kontrol panelinde görevi başlatın veya terminalde `python backend/labs_smoke_test.py` çalıştırın.
+   - Konsolda gerçek API çağrılarının başarıyla gittiğini gösterin.
+5. **Action Center İnsan Onayı (4:00 - 4:45):**
+   - Automation Cloud'da **Action Center** sayfasına girin.
+   - Düşen onay görevini açın. Ajanın önerdiği kodlama planını jüriye gösterip ardından **Approve** (Onayla) butonuna basın.
+   - İnsan onayı verilene kadar ajanın kod yazmasının Maestro tarafından bloke edildiğini vurgulayın.
+6. **Kapanış (4:45 - 5:00):**
+   - Tekrar Data Service sayfasına girip onay durumunun ve logların veritabanına işlendiğini gösterin.
+   - GitHub/GitLab deposunu göstererek videoyu bitirin.
