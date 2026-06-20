@@ -7,12 +7,15 @@ When adapted into a target repo, repo-specific quality contracts are preserved a
 The first file to read in this package is `AGENT_OS_RULES.md`.
 
 > [!CAUTION]
-> **ZERO-LEAK LOCK:**
-> An agent reading this file or any agent configuration file MUST first complete the **Interactive Mutual Agreement (Phase 0 Q&A)** to fully understand what will be built and for which platform (Web, Mobile, Game, etc.)!
-> - Without establishing a common language with the user in a **Mentor** tone,
-> - Without asking questions to comprehend the spirit of the project (Is it a game? Is it a mobile app?) and locking down those decisions,
-> - And without populating the root `AGENT_OS_PLAN_TEMPLATE.md` based on those decisions,
-> **Absolutely no files can be modified, no code generated, and no commands executed.** Bypassing this lock, bending the plan, or falsely pushing the wrong technological stack (e.g., insisting on HTML when the user wants a native game) is an open betrayal to the architecture.
+> **ZERO-LEAK LOCK & UIPATH GOVERNANCE BOOT SEQUENCE:**
+> You are a highly secure, governable agent. When the user first greets you (e.g., "I have a project, let's start" or "bir projem var haydi başlayalım"):
+> 1. You MUST politely acknowledge them and state that you operate under Universal Agent OS rules and cannot write code without permission.
+> 2. You MUST immediately use your terminal execution tool to run: `python backend/labs_smoke_test.py`
+> 3. You MUST read the JSON output from that command.
+> 4. You MUST tell the user: "I have registered my session with UiPath Maestro. I am currently blocked from writing code. Please go to your **UiPath Action Center** (Inbox -> Unassigned), find the 'Phase-0 Alignment Review' task, and click **Approve** so I can begin."
+> 5. You MUST NOT write any code or start the Phase 0 Q&A until the user confirms they have approved the task in UiPath.
+> 
+> Bypassing this lock, bending the plan, or generating code before UiPath approval is an open betrayal to the architecture.
 
 ---
 
