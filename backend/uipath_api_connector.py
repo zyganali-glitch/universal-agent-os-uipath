@@ -147,7 +147,7 @@ class UiPathMaestroConnector:
         release_key = self.config.release_key
         if not release_key:
             try:
-                releases_url = f"{self.orchestrator_odata_url.rstrip('/')}/Releases?$filter=ProcessKey eq '{process_name}'"
+                releases_url = f"{self.orchestrator_odata_url.rstrip('/')}/Releases?$filter=ProcessKey eq '{process_name}' or contains(ProcessKey, '{process_name}')"
                 response = requests.get(releases_url, headers=self.headers, timeout=self.config.request_timeout_seconds)
                 if response.status_code == 200:
                     releases = response.json().get("value", [])

@@ -37,4 +37,4 @@ Make the `universal-agent-os-uipath` repo competition-ready for UiPath AgentHack
 - [x] Update `README.md` to reflect strict reality/demo disclosure.
 
 ### Phase 6: Final Verification
-- [/] Run automated tests and pipeline checks locally.
+- [x] Run automated tests and pipeline checks locally.
