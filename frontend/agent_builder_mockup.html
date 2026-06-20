@@ -439,7 +439,7 @@
             <!-- Task Input -->
             <div class="glass-card">
                 <div class="card-header">
-                    <h3>🚀 Assign Task</h3>
+                    <h3>🌱 Start With an Idea</h3>
                 </div>
                 <div class="card-body">
                     <div class="agent-select" id="agentSelect">
@@ -469,12 +469,12 @@
                         </div>
                     </div>
                     <div class="task-input-area">
-                        <textarea id="taskInput" placeholder="Describe the coding task...&#10;&#10;e.g. Add a Stripe payment integration to the checkout backend with idempotent request handling."></textarea>
+                        <textarea id="taskInput" placeholder="No technical words needed.&#10;&#10;Example: I have an idea, let's build it together."></textarea>
                     </div>
                     <br>
                     <button class="btn-launch" id="launchBtn" onclick="handleMainBtnClick()">
                         <span class="shimmer"></span>
-                        Start Maestro Process
+                        Start Guided Project
                     </button>
                 </div>
             </div>
@@ -533,8 +533,8 @@
                         </div>
                         <div class="bpmn-arrow" id="arrow-2"></div>
                         <div class="bpmn-node" id="node-phase0">
-                            <div class="bpmn-circle">🔍</div>
-                            <div class="bpmn-label">Phase-0 Align</div>
+                            <div class="bpmn-circle">🛡️</div>
+                            <div class="bpmn-label">Create Gate</div>
                         </div>
                         <div class="bpmn-arrow" id="arrow-3"></div>
                         <div class="bpmn-node" id="node-human">
@@ -543,13 +543,13 @@
                         </div>
                         <div class="bpmn-arrow" id="arrow-4"></div>
                         <div class="bpmn-node" id="node-execute">
-                            <div class="bpmn-circle">⚡</div>
-                            <div class="bpmn-label">Execute Code</div>
+                            <div class="bpmn-circle">💬</div>
+                            <div class="bpmn-label">Phase-0 Interview</div>
                         </div>
                         <div class="bpmn-arrow" id="arrow-5"></div>
                         <div class="bpmn-node" id="node-end">
-                            <div class="bpmn-circle">✅</div>
-                            <div class="bpmn-label">Complete</div>
+                            <div class="bpmn-circle">📋</div>
+                            <div class="bpmn-label">Contract Ready</div>
                         </div>
                     </div>
                 </div>
@@ -603,9 +603,9 @@
                     <div class="phase-list" id="phaseList">
                         <div class="phase-item" id="phase-trigger"><div class="phase-dot"></div><span class="phase-text">Maestro Trigger</span><span class="phase-time">—</span></div>
                         <div class="phase-item" id="phase-fetch"><div class="phase-dot"></div><span class="phase-text">Fetch Memory</span><span class="phase-time">—</span></div>
-                        <div class="phase-item" id="phase-interview"><div class="phase-dot"></div><span class="phase-text">Phase-0 Interview</span><span class="phase-time">—</span></div>
                         <div class="phase-item" id="phase-approval"><div class="phase-dot"></div><span class="phase-text">Human Approval</span><span class="phase-time">—</span></div>
-                        <div class="phase-item" id="phase-execute"><div class="phase-dot"></div><span class="phase-text">Agent Execution</span><span class="phase-time">—</span></div>
+                        <div class="phase-item" id="phase-interview"><div class="phase-dot"></div><span class="phase-text">Phase-0 Interview</span><span class="phase-time">—</span></div>
+                        <div class="phase-item" id="phase-execute"><div class="phase-dot"></div><span class="phase-text">Planning Permission</span><span class="phase-time">—</span></div>
                         <div class="phase-item" id="phase-save"><div class="phase-dot"></div><span class="phase-text">Save to Memory</span><span class="phase-time">—</span></div>
                     </div>
                 </div>
@@ -630,11 +630,11 @@
     <div class="modal-overlay" id="approvalModal">
         <div class="modal-box">
             <h3>⚠️ UiPath Action Center</h3>
-            <p class="modal-sub">Offline demo simulation of the Action Center approval gate. As the Lead Developer, you must approve or reject before code execution begins.</p>
+            <p class="modal-sub">Offline simulation of the Action Center gate. Approve or reject permission to begin the Phase-0 beginner interview.</p>
             <div class="modal-plan" id="modalPlanText"></div>
             <div class="modal-actions">
-                <button class="btn-approve" onclick="handleApproval(true)">✅ Approve Plan</button>
-                <button class="btn-reject" onclick="handleApproval(false)">❌ Reject Plan</button>
+                <button class="btn-approve" onclick="handleApproval(true)">✅ Approve Phase-0</button>
+                <button class="btn-reject" onclick="handleApproval(false)">❌ Reject Request</button>
             </div>
         </div>
     </div>
@@ -816,7 +816,7 @@ const delay = ms => new Promise(r => setTimeout(r, ms));
 async function startMaestroProcess() {
     if (isRunning) return;
     const task = document.getElementById('taskInput').value.trim();
-    if (!task) { alert('Please describe a coding task.'); return; }
+    if (!task) { alert('Please describe your idea in everyday words.'); return; }
 
     isRunning = true;
     const btn = document.getElementById('launchBtn');
@@ -854,13 +854,12 @@ async function startMaestroProcess() {
     await waitForNextStep();
     setPhase('phase-fetch', 'done');
 
-    // Phase 3: Phase-0 Alignment
+    // Phase 3: Create governance gate before Phase-0
     activateNode('node-phase0', 'arrow-2');
-    setPhase('phase-interview', 'active');
-    setAgentBadge('PHASE-0 ALIGN', 'var(--accent-purple)');
-    log('agent', `${agent.name} starting Phase-0 Alignment Interview...`);
+    setAgentBadge('CREATING GATE', 'var(--accent-purple)');
+    log('agent', `${agent.name} is registering the project idea before asking technical questions...`);
     await delay(1200);
-    log('agent', 'Analyzing task against Minefield History...');
+    log('agent', 'Preparing a plain-language review request with memory context...');
     await delay(1000);
 
     // Check relevant minefield
@@ -868,16 +867,15 @@ async function startMaestroProcess() {
     if (relevantMine) {
         log('agent', `⚠️ <strong>MINEFIELD MATCH:</strong> "${relevantMine.lesson}" [${relevantMine.severity.toUpperCase()}]`);
         await delay(800);
-        log('agent', 'Adjusting implementation plan to address this known risk...');
+        log('agent', 'Adding the known risk to the human review context...');
     } else {
-        log('agent', 'No direct Minefield matches found. Proceeding with standard analysis.');
+        log('agent', 'No direct Minefield matches found.');
     }
     await delay(1000);
-    log('agent', 'Validating against Code Soul architectural principles...');
+    log('agent', 'Attaching Code Soul rules to the governance request...');
     await delay(800);
-    log('agent', 'Phase-0 Alignment complete. Submitting plan for human review.');
+    log('agent', 'Governance request ready. Phase-0 has not started.');
     await waitForNextStep();
-    setPhase('phase-interview', 'done');
 
     // Phase 4: Human Approval (INTERACTIVE)
     activateNode('node-human', 'arrow-3');
@@ -890,11 +888,9 @@ async function startMaestroProcess() {
     const planHtml = `
         <strong>Agent:</strong> ${agent.name} (${agent.model})<br>
         <strong>Task:</strong> ${task}<br><br>
-        <strong>Proposed Approach:</strong><br>
-        1. Create new module following microservices pattern<br>
-        2. Implement with full test coverage (>80%)<br>
-        3. Use RESTful API with OpenAPI 3.0 spec<br>
-        ${relevantMine ? `4. <span style="color:var(--accent-yellow);">⚠️ Special handling for: ${relevantMine.lesson}</span><br>` : ''}
+        <strong>Requested Permission:</strong><br>
+        Begin a beginner-friendly Phase-0 interview. No product code will be written during this step.<br>
+        ${relevantMine ? `<span style="color:var(--accent-yellow);">⚠️ Relevant lesson: ${relevantMine.lesson}</span><br>` : ''}
         <br><em>Memory context: ${memoryData.minefield.length} minefields loaded, ${memoryData.soul.principles.length} principles enforced.</em>
     `;
 
@@ -905,39 +901,37 @@ async function startMaestroProcess() {
         document.getElementById('statApproved').textContent = sessionStats.approved;
         setPhase('phase-approval', 'done');
         log('human', '✅ Lead Developer <strong>APPROVED</strong> the plan via UiPath Action Center.');
-        log('maestro', 'Process <strong>RESUMED</strong>. Granting agent execution rights.');
+        log('maestro', 'Server-side approval verified. Granting Phase-0 interview permission only.');
         await waitForNextStep();
 
-        // Phase 5: Execute
+        // Phase 5: Begin beginner Phase-0 interview
         activateNode('node-execute', 'arrow-4');
+        setPhase('phase-interview', 'active');
         setPhase('phase-execute', 'active');
-        setAgentBadge('CODING', 'var(--accent-green)');
-        setGlobalStatus('AGENT EXECUTING', true);
-        log('agent', `${agent.name} is now writing code...`);
-        await delay(2000);
-        log('agent', 'Created: src/payments/stripe-handler.ts');
+        setAgentBadge('PHASE-0 INTERVIEW', 'var(--accent-green)');
+        setGlobalStatus('PHASE-0 ACTIVE', true);
+        log('agent', `${agent.name}: "Ne yapmak istiyorsun? Fikrini günlük dille bir veya iki cümleyle anlat."`);
+        await delay(1500);
+        log('agent', 'The interview will ask exactly one plain-language question at a time.');
         await delay(800);
-        log('agent', 'Created: src/payments/__tests__/stripe-handler.test.ts');
-        await delay(600);
-        log('agent', 'Updated: src/api/routes.ts (added /api/payments endpoint)');
-        await delay(500);
-        log('agent', 'Code execution complete. All changes committed.');
+        log('agent', 'Product code remains blocked until the Phase-0 contract and implementation plan are complete.');
         await waitForNextStep();
+        setPhase('phase-interview', 'done');
         setPhase('phase-execute', 'done');
 
         // Phase 6: Save
         activateNode('node-end', 'arrow-5');
         setPhase('phase-save', 'active');
         setAgentBadge('SAVING MEMORY', 'var(--accent-blue)');
-        log('memory', 'Updating State Memory with completed task record...');
+        log('memory', 'Saving the verified approval and Phase-0 interview state...');
         memoryData.state.history.push({ task: task, agent: agent.name, result: 'approved', timestamp: new Date().toISOString() });
         await delay(600);
-        log('memory', 'State Memory updated. Session history saved.');
+        log('memory', 'State Memory updated. Beginner project contract is ready to continue.');
         await waitForNextStep();
         setPhase('phase-save', 'done');
         setAgentBadge('COMPLETED', 'var(--accent-green)');
         setGlobalStatus('COMPLETED', false);
-        log('system', '🎉 <strong>Maestro BPMN Process Complete.</strong> Agent governed, human approved, memory persisted.');
+        log('system', '🎉 <strong>Governed bootstrap complete.</strong> Human approval verified; Phase-0 may continue.');
 
     } else {
         sessionStats.rejected++;
@@ -959,6 +953,7 @@ async function startMaestroProcess() {
         log('memory', `New Minefield entry added: <strong>${newMinefield.id}</strong>`);
         
         // Mark remaining phases
+        setPhase('phase-interview', '');
         setPhase('phase-execute', '');
         setPhase('phase-save', '');
         setAgentBadge('REJECTED', 'var(--accent-red)');
@@ -969,7 +964,7 @@ async function startMaestroProcess() {
     // Reset button
     isRunning = false;
     btn.disabled = false;
-    btn.innerHTML = '<span class="shimmer"></span>Start Maestro Process';
+    btn.innerHTML = '<span class="shimmer"></span>Start Guided Project';
 }
 
 // Init agent display

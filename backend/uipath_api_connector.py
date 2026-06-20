@@ -23,6 +23,7 @@ class UiPathApiError(RuntimeError):
 
 @dataclass(frozen=True)
 class UiPathConfig:
+    organization_name: str
     tenant_name: str
     organization_unit_id: str
     access_token: str
@@ -35,8 +36,20 @@ class UiPathConfig:
     @classmethod
     def from_env(cls) -> "UiPathConfig":
         mock_mode = os.getenv("UIPATH_MOCK_MODE", "true").strip().lower() == "true"
+        configured_organization = os.getenv(
+            "UIPATH_ORGANIZATION_NAME",
+            "",
+        ).strip()
+        configured_tenant = os.getenv("UIPATH_TENANT_NAME", "").strip()
+        organization_name = configured_organization or configured_tenant
+        tenant_name = (
+            configured_tenant
+            if configured_organization
+            else os.getenv("UIPATH_ACTUAL_TENANT_NAME", "DefaultTenant").strip()
+        )
         cfg = cls(
-            tenant_name=os.getenv("UIPATH_TENANT_NAME", "").strip(),
+            organization_name=organization_name,
+            tenant_name=tenant_name or "DefaultTenant",
             organization_unit_id=os.getenv("UIPATH_OU_ID", "").strip(),
             access_token=os.getenv("UIPATH_ACCESS_TOKEN", "").strip(),
             client_id=os.getenv("UIPATH_CLIENT_ID", "").strip(),
@@ -47,8 +60,8 @@ class UiPathConfig:
         )
         if not cfg.mock_mode:
             missing = []
-            if not cfg.tenant_name:
-                missing.append("UIPATH_TENANT_NAME")
+            if not cfg.organization_name:
+                missing.append("UIPATH_ORGANIZATION_NAME")
             if not cfg.organization_unit_id:
                 missing.append("UIPATH_OU_ID")
             if not cfg.access_token and (not cfg.client_id or not cfg.client_secret):
@@ -74,7 +87,10 @@ class UiPathMaestroConnector:
 
     def __init__(self, config: Optional[UiPathConfig] = None):
         self.config = config or UiPathConfig.from_env()
-        self.base_url = f"https://cloud.uipath.com/{self.config.tenant_name}/DefaultTenant/odata"
+        self.base_url = (
+            f"https://cloud.uipath.com/{self.config.organization_name}/"
+            f"{self.config.tenant_name}/orchestrator_/odata"
+        )
         self.orchestrator_odata_url = os.getenv("UIPATH_ORCHESTRATOR_ODATA_URL", "").strip() or self.base_url
         self.data_service_api_url = os.getenv("UIPATH_DATA_SERVICE_API_URL", "").strip()
         self.action_center_odata_url = os.getenv("UIPATH_ACTION_CENTER_ODATA_URL", "").strip() or self.orchestrator_odata_url
@@ -127,6 +143,26 @@ class UiPathMaestroConnector:
             )
             if response.status_code not in (200, 201, 202, 204):
                 raise UiPathApiError(f"UiPath API failed with status {response.status_code}: {response.text}")
+            return response.json() if response.content else {}
+        except requests.RequestException as exc:
+            raise UiPathApiError(f"UiPath API request failed: {url} :: {exc}") from exc
+
+    def _get(
+        self,
+        url: str,
+        params: Optional[Dict[str, Any]] = None,
+    ) -> Any:
+        try:
+            response = requests.get(
+                url,
+                headers=self.headers,
+                params=params,
+                timeout=self.config.request_timeout_seconds,
+            )
+            if response.status_code != 200:
+                raise UiPathApiError(
+                    f"UiPath API failed with status {response.status_code}: {response.text}"
+                )
             return response.json() if response.content else {}
         except requests.RequestException as exc:
             raise UiPathApiError(f"UiPath API request failed: {url} :: {exc}") from exc
@@ -198,11 +234,61 @@ class UiPathMaestroConnector:
         if self.data_service_api_url:
             endpoint = f"{self.data_service_api_url.rstrip('/')}/{entity_name}/insert"
         else:
-            org_name = self.config.tenant_name
-            endpoint = f"https://cloud.uipath.com/{org_name}/DefaultTenant/dataservice_/api/EntityService/{entity_name}/insert"
+            endpoint = (
+                f"https://cloud.uipath.com/{self.config.organization_name}/"
+                f"{self.config.tenant_name}/dataservice_/api/EntityService/"
+                f"{entity_name}/insert"
+            )
         result = self._post(endpoint, data)
         result["mock"] = False
         return result
+
+    def read_master_memory(
+        self,
+        entity_name: str,
+        limit: int = 100,
+    ) -> Dict[str, Any]:
+        if not entity_name:
+            raise ValueError("entity_name is required")
+        if limit < 1:
+            raise ValueError("limit must be greater than zero")
+
+        if self.mock_mode:
+            return {
+                "status": "mock_success",
+                "entity": entity_name,
+                "records": [],
+                "count": 0,
+                "mock": True,
+            }
+
+        if self.data_service_api_url:
+            endpoint = f"{self.data_service_api_url.rstrip('/')}/{entity_name}/read"
+        else:
+            endpoint = (
+                f"https://cloud.uipath.com/{self.config.organization_name}/"
+                f"{self.config.tenant_name}/"
+                f"dataservice_/api/EntityService/{entity_name}/read"
+            )
+
+        payload = self._get(endpoint, params={"start": 0, "limit": limit})
+        if isinstance(payload, list):
+            records = payload[:limit]
+        elif isinstance(payload, dict):
+            raw_records = payload.get(
+                "Value",
+                payload.get("value", payload.get("records", [])),
+            )
+            records = raw_records[:limit] if isinstance(raw_records, list) else []
+        else:
+            records = []
+
+        return {
+            "entity": entity_name,
+            "records": records,
+            "count": len(records),
+            "mock": False,
+        }
 
     def request_human_approval(self, agent_plan: str) -> Dict[str, Any]:
         if not agent_plan.strip():
@@ -210,11 +296,11 @@ class UiPathMaestroConnector:
 
         if self.mock_mode:
             return {
-                "status": "mock_approved",
+                "status": "mock_pending",
                 "task_id": f"mock_task_{int(time.time())}",
-                "approved": True,
+                "approved": False,
                 "mock": True,
-                "message": "MOCK MODE: human approval simulated.",
+                "message": "MOCK MODE: approval task created.",
             }
 
         payload = {
@@ -222,7 +308,8 @@ class UiPathMaestroConnector:
             "Priority": "High",
             "Data": {
                 "AgentProposedPlan": agent_plan,
-                "RequiresHumanOverride": False,
+                "Approved": False,
+                "ReviewerNotes": "",
             },
             "FormLayout": {
                 "components": [
@@ -233,13 +320,19 @@ class UiPathMaestroConnector:
                         "input": True
                     },
                     {
-                        "label": "Requires Human Override",
-                        "key": "RequiresHumanOverride",
+                        "label": "I approve this plan and grant execution permission",
+                        "key": "Approved",
                         "type": "checkbox",
                         "input": True
                     },
                     {
-                        "label": "Submit",
+                        "label": "Reviewer Notes",
+                        "key": "ReviewerNotes",
+                        "type": "textarea",
+                        "input": True
+                    },
+                    {
+                        "label": "Submit Decision",
                         "key": "submit",
                         "type": "button",
                         "input": True
@@ -259,6 +352,93 @@ class UiPathMaestroConnector:
             result["task_id"] = str(result["id"])
         return result
 
+    def get_human_approval(self, task_id: str) -> Dict[str, Any]:
+        if not str(task_id).strip():
+            raise ValueError("task_id is required")
+
+        if self.mock_mode:
+            return {
+                "task_id": str(task_id),
+                "title": "Phase-0 Alignment Review",
+                "status": "Completed",
+                "completed": True,
+                "approved": True,
+                "reviewer_notes": "MOCK MODE: approval simulated.",
+                "mock": True,
+            }
+
+        odata_endpoint = (
+            f"{self.action_center_odata_url.rstrip('/')}/Tasks({task_id})"
+        )
+        task = self._get(odata_endpoint)
+        status = str(task.get("Status", "")).strip()
+        completed = bool(task.get("IsCompleted")) or status.lower() in {
+            "completed",
+            "done",
+        }
+
+        task_data: Dict[str, Any] = {}
+        action = None
+        if completed:
+            base_url = self.action_center_odata_url.rstrip("/")
+            if base_url.endswith("/odata"):
+                base_url = base_url[:-6]
+            detail_endpoint = (
+                f"{base_url}/tasks/GenericTasks/GetTaskDataById"
+            )
+            detail = self._get(detail_endpoint, params={"taskId": task_id})
+            if isinstance(detail, dict):
+                raw_data = detail.get("data", {})
+                task_data = raw_data if isinstance(raw_data, dict) else {}
+                action = detail.get("action")
+
+        raw_decision = task_data.get(
+            "Approved",
+            task_data.get("ApprovalDecision", task_data.get("approved")),
+        )
+        if isinstance(raw_decision, str):
+            approved = raw_decision.strip().lower() in {
+                "true",
+                "approved",
+                "approve",
+                "yes",
+            }
+        else:
+            approved = raw_decision is True
+
+        return {
+            "task_id": str(task_id),
+            "title": str(task.get("Title", "")),
+            "status": status or "Unknown",
+            "completed": completed,
+            "approved": completed and approved,
+            "reviewer_notes": str(task_data.get("ReviewerNotes", "")),
+            "action": action,
+            "mock": False,
+        }
+
+    def wait_for_human_approval(
+        self,
+        task_id: str,
+        timeout_seconds: int = 900,
+        poll_interval_seconds: int = 5,
+    ) -> Dict[str, Any]:
+        if timeout_seconds < 1:
+            raise ValueError("timeout_seconds must be greater than zero")
+        if poll_interval_seconds < 1:
+            raise ValueError("poll_interval_seconds must be greater than zero")
+
+        deadline = time.monotonic() + timeout_seconds
+        while True:
+            decision = self.get_human_approval(task_id)
+            if decision["completed"]:
+                return decision
+            if time.monotonic() >= deadline:
+                raise UiPathApiError(
+                    f"Timed out waiting for Action Center task {task_id}"
+                )
+            time.sleep(poll_interval_seconds)
+
 
 if __name__ == "__main__":
     connector = UiPathMaestroConnector()
@@ -275,8 +455,5 @@ if __name__ == "__main__":
     )
     print("Approval:", approval)
 
-    memory = connector.update_master_memory(
-        "MinefieldHistory",
-        {"lesson": "Always inspect existing UI components before adding new ones."},
-    )
+    memory = connector.read_master_memory("MinefieldHistory", limit=10)
     print("Memory:", memory)

@@ -1,0 +1,15 @@
+---
+description: Mandatory beginner bootstrap and UiPath governance gate
+alwaysApply: true
+---
+
+Read and obey the root `AGENTS.md`.
+
+Before Phase-0 or product code:
+
+1. Run `python backend/labs_smoke_test.py register`.
+2. Wait for the human's Action Center decision.
+3. Run `python backend/labs_smoke_test.py verify`.
+4. Continue only on `gate_status: APPROVED`.
+5. Run `python backend/phase0_interview.py start` and ask one returned question
+   at a time.

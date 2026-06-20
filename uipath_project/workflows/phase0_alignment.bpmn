@@ -29,22 +29,22 @@ Purpose:
         Fetch State Memory, Persona, Minefield History and Code Soul records from UiPath Data Service.
       </bpmn:documentation>
       <bpmn:incoming>Flow_Start_To_FetchMemory</bpmn:incoming>
-      <bpmn:outgoing>Flow_FetchMemory_To_Phase0</bpmn:outgoing>
+      <bpmn:outgoing>Flow_FetchMemory_To_HumanReview</bpmn:outgoing>
     </bpmn:serviceTask>
 
     <bpmn:serviceTask id="ServiceTask_RunPhase0Alignment" name="Run Phase-0 Alignment with coding agent">
       <bpmn:documentation>
-        Send coding task plus governance memory to selected coding agent. Agent must produce a plan before writing code.
+        After verified approval, ask the beginner interview questions one at a time and persist the Phase-0 contract before planning.
       </bpmn:documentation>
-      <bpmn:incoming>Flow_FetchMemory_To_Phase0</bpmn:incoming>
-      <bpmn:outgoing>Flow_Phase0_To_HumanReview</bpmn:outgoing>
+      <bpmn:incoming>Flow_GrantExecution_To_Phase0</bpmn:incoming>
+      <bpmn:outgoing>Flow_Phase0_To_SaveState</bpmn:outgoing>
     </bpmn:serviceTask>
 
     <bpmn:userTask id="UserTask_ActionCenterReview" name="Human review in Action Center">
       <bpmn:documentation>
-        Lead Developer reviews agent plan. The agent cannot proceed until approved.
+        Lead Developer reviews the request to begin Phase-0. The agent cannot ask interview questions or write code until the decision is verified.
       </bpmn:documentation>
-      <bpmn:incoming>Flow_Phase0_To_HumanReview</bpmn:incoming>
+      <bpmn:incoming>Flow_FetchMemory_To_HumanReview</bpmn:incoming>
       <bpmn:outgoing>Flow_HumanReview_To_Decision</bpmn:outgoing>
     </bpmn:userTask>
 
@@ -54,19 +54,19 @@ Purpose:
       <bpmn:outgoing>Flow_Decision_To_UpdateMinefield</bpmn:outgoing>
     </bpmn:exclusiveGateway>
 
-    <bpmn:serviceTask id="ServiceTask_GrantExecution" name="Grant execution permission to coding agent">
+    <bpmn:serviceTask id="ServiceTask_GrantExecution" name="Grant Phase-0 interview permission">
       <bpmn:documentation>
-        If approved, Maestro grants execution permission and records the approved plan.
+        If approved, verify the Action Center decision and grant permission to begin the beginner interview. Product-code execution remains blocked.
       </bpmn:documentation>
       <bpmn:incoming>Flow_Decision_To_GrantExecution</bpmn:incoming>
-      <bpmn:outgoing>Flow_GrantExecution_To_SaveState</bpmn:outgoing>
+      <bpmn:outgoing>Flow_GrantExecution_To_Phase0</bpmn:outgoing>
     </bpmn:serviceTask>
 
     <bpmn:serviceTask id="ServiceTask_SaveStateMemory" name="Save task result to State Memory">
       <bpmn:documentation>
         Save approved task execution status and audit metadata to UiPath Data Service.
       </bpmn:documentation>
-      <bpmn:incoming>Flow_GrantExecution_To_SaveState</bpmn:incoming>
+      <bpmn:incoming>Flow_Phase0_To_SaveState</bpmn:incoming>
       <bpmn:outgoing>Flow_SaveState_To_EndApproved</bpmn:outgoing>
     </bpmn:serviceTask>
 
@@ -87,8 +87,7 @@ Purpose:
     </bpmn:endEvent>
 
     <bpmn:sequenceFlow id="Flow_Start_To_FetchMemory" sourceRef="StartEvent_TaskSubmitted" targetRef="ServiceTask_FetchMasterMemory" />
-    <bpmn:sequenceFlow id="Flow_FetchMemory_To_Phase0" sourceRef="ServiceTask_FetchMasterMemory" targetRef="ServiceTask_RunPhase0Alignment" />
-    <bpmn:sequenceFlow id="Flow_Phase0_To_HumanReview" sourceRef="ServiceTask_RunPhase0Alignment" targetRef="UserTask_ActionCenterReview" />
+    <bpmn:sequenceFlow id="Flow_FetchMemory_To_HumanReview" sourceRef="ServiceTask_FetchMasterMemory" targetRef="UserTask_ActionCenterReview" />
     <bpmn:sequenceFlow id="Flow_HumanReview_To_Decision" sourceRef="UserTask_ActionCenterReview" targetRef="ExclusiveGateway_ApprovalDecision" />
 
     <bpmn:sequenceFlow id="Flow_Decision_To_GrantExecution" name="Approved" sourceRef="ExclusiveGateway_ApprovalDecision" targetRef="ServiceTask_GrantExecution">
@@ -99,7 +98,8 @@ Purpose:
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><![CDATA[approved == false]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
 
-    <bpmn:sequenceFlow id="Flow_GrantExecution_To_SaveState" sourceRef="ServiceTask_GrantExecution" targetRef="ServiceTask_SaveStateMemory" />
+    <bpmn:sequenceFlow id="Flow_GrantExecution_To_Phase0" sourceRef="ServiceTask_GrantExecution" targetRef="ServiceTask_RunPhase0Alignment" />
+    <bpmn:sequenceFlow id="Flow_Phase0_To_SaveState" sourceRef="ServiceTask_RunPhase0Alignment" targetRef="ServiceTask_SaveStateMemory" />
     <bpmn:sequenceFlow id="Flow_SaveState_To_EndApproved" sourceRef="ServiceTask_SaveStateMemory" targetRef="EndEvent_Approved" />
     <bpmn:sequenceFlow id="Flow_UpdateMinefield_To_EndRejected" sourceRef="ServiceTask_UpdateMinefieldHistory" targetRef="EndEvent_Rejected" />
 

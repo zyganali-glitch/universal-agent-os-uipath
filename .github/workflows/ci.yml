@@ -24,15 +24,25 @@ jobs:
 
       - name: Compile backend
         run: |
-          python -m py_compile backend/sync_markdown_to_uipath.py backend/uipath_api_connector.py backend/labs_smoke_test.py
+          python -m py_compile backend/sync_markdown_to_uipath.py backend/uipath_api_connector.py backend/labs_smoke_test.py backend/phase0_interview.py
 
       - name: Run tests
         run: |
           pytest -q
 
+      - name: Exercise approval gate in mock mode
+        env:
+          UIPATH_MOCK_MODE: "true"
+        run: |
+          python backend/labs_smoke_test.py register --task "CI approval gate"
+          python backend/labs_smoke_test.py verify
+
       - name: Verify required evidence files
         run: |
           test -f README.md
+          test -f AGENTS.md
+          test -f CLAUDE.md
+          test -f GEMINI.md
           test -f LICENSE
           test -f .env.example
           test -f docs/architecture_bpmn.mermaid
@@ -40,6 +50,8 @@ jobs:
           test -f docs/coding_agents_evidence.md
           test -f docs/devpost_submission_update.md
           test -f docs/demo_transcript.md
+          test -f docs/DEMO_VIDEO_DIRECTOR_TR.md
+          test -f docs/UIPATH_PREP_CHECKLIST_TR.md
           test -f docs/uipath_labs_real_runbook.md
           test -f docs/labs_evidence_checklist.md
           test -f docs/labs/.gitkeep
@@ -51,3 +63,4 @@ jobs:
           test -f uipath_project/entities/state_memory.json
           test -f uipath_project/entities/persona.json
           test -f tests/test_uipath_connector_modes.py
+          test -f tests/test_phase0_interview.py

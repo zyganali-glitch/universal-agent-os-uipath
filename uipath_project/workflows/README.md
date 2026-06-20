@@ -21,17 +21,17 @@ If a real UiPath Labs export is later added, place it in this folder and update 
 | Developer | Submits coding task |
 | UiPath Maestro BPMN | Orchestrates the process |
 | UiPath Data Service | Stores Code Soul, Minefield History, Persona and State Memory |
-| Coding Agent | Generates implementation plan and later writes code |
-| Lead Developer | Reviews plan via Action Center approval gate |
+| Coding Agent | Guides the beginner interview and later creates an implementation plan |
+| Lead Developer | Grants or rejects permission to begin Phase-0 via Action Center |
 
 ## Required UiPath Labs implementation
 
 1. Create Data Service entities from `uipath_project/entities/*.json`.
 2. Create a Maestro BPMN process named `UniversalAgentOS_Phase0_Flow`.
 3. Add service task: Fetch Master Memory.
-4. Add agent/service task: Run Phase-0 Alignment.
-5. Add user task: Action Center Review.
-6. Add exclusive gateway: approved/rejected.
-7. Approved path: Grant execution permission and save State Memory.
+4. Add user task: Action Center Review.
+5. Add exclusive gateway: approved/rejected.
+6. Approved path: verify approval, then run the one-question-at-a-time Phase-0 Alignment.
+7. Save the completed Phase-0 contract to State Memory.
 8. Rejected path: Update Minefield History and stop execution.
 9. Capture screenshots and run ids listed in `docs/labs_evidence_checklist.md`.

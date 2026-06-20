@@ -1,22 +1,28 @@
 # Devpost Submission Update Text
 
 ## One-liner
-Universal Agent OS is a UiPath Maestro BPMN governance layer for autonomous coding agents, enforcing Phase-0 alignment, human approval, and collective memory before code execution.
+Universal Agent OS is a UiPath-based governance prototype for autonomous coding agents. It models the lifecycle in Maestro BPMN, reads persistent governance memory, creates a human review task, and verifies the Action Center decision before Phase-0 can continue.
 
 ## What it does
-Universal Agent OS wraps around any autonomous coding agent (Cursor, Claude Code, Gemini CLI, etc.) and integrates it into a Secure Software Development Lifecycle (SSDL). The process is orchestrated by UiPath Maestro BPMN. Before an agent can write code, it must align its proposal with global architectural guidelines ("Code Soul") and lessons from past errors ("Minefield History") stored in UiPath Data Service. The plan must then pass an approval gate in UiPath Action Center before code execution is unblocked.
+Universal Agent OS wraps around coding agents such as Cursor, Claude Code, and Gemini CLI and integrates them into a Secure Software Development Lifecycle (SSDL). The process is modeled in UiPath Maestro BPMN. Before Phase-0, the strict connector reads architectural guidelines ("Code Soul") and lessons from past errors ("Minefield History") from UiPath Data Service. It then creates an Action Center task. A separate verification step reads the server-side task result and proceeds only when the task is completed with explicit approval.
+
+A nontechnical user can start with only: **“Bir fikrim var, birlikte
+yapalım.”** Repository-native adapters teach supported IDE agents to run the
+governance flow themselves. After verified approval, an auditable Phase-0
+engine asks eight plain-language questions one at a time and persists the
+answers before technical planning begins.
 
 ## Inspiration
 Enterprises are racing to adopt AI coding assistants, but the lack of governance is a huge barrier. Coding agents are brilliant but lack architectural compliance, context-aware guardrails, and persistent memory. We designed a framework where agents are governed like junior developers who need alignment sessions and code approvals.
 
 ## How we built it
-The orchestration workflow is modeled in BPMN and executed via the UiPath stack. We implemented a Python connector that communicates with Orchestrator, Data Service, and Action Center APIs. The system runs in two modes: an offline interactive simulation dashboard (Demo Mode) and a robust integration checking mode (Strict Real Mode) that enforces strict environment validation and API responses without silent mock fallbacks. We dogfooded our governance rules using Google Gemini and GitLab Duo to build the project.
+The orchestration workflow is modeled in portable BPMN 2.0 and connected to live UiPath Orchestrator, Data Service, and Action Center APIs. The system runs in two explicit modes: an offline interactive simulation dashboard and Strict Real Mode, which validates configuration and never silently falls back to mock responses. Strict Real Mode supports memory reads, process triggering, review-task creation, server-side decision verification, and approval/rejection persistence. We dogfooded our governance rules using Google Gemini and GitLab Duo to build the project.
 
 ## UiPath components used
-- **UiPath Maestro (BPMN):** Manages the process orchestration lifecycle.
+- **UiPath Maestro (BPMN):** Models the process orchestration lifecycle; the portable BPMN is included in the repository.
 - **UiPath Data Service:** Stores and serves the 4 Collective Memory tables.
 - **UiPath Action Center:** Acts as the Human-in-the-Loop approval gate task server.
-- **UiPath Integration Service & API:** Links Python agent processes with Orchestrator.
+- **UiPath Orchestrator and platform APIs:** Link Python agent processes with the deployed UiPath runtime.
 
 ## What is real vs simulated
 - **Real in repo:**
@@ -25,6 +31,11 @@ The orchestration workflow is modeled in BPMN and executed via the UiPath stack.
   - Portable BPMN process specification.
   - Frontend dashboard simulation.
   - Governance markdown parser.
+  - Data Service memory reads and writes.
+  - Action Center completion and explicit approval verification.
+  - Root-level discovery instructions for Codex-compatible agents, Claude,
+    Gemini, Cursor, and GitHub Copilot.
+  - A stateful one-question-at-a-time beginner Phase-0 interview.
 - **Real in UiPath Labs if shown:**
   - Maestro BPMN process.
   - Data Service entity.
@@ -33,6 +44,7 @@ The orchestration workflow is modeled in BPMN and executed via the UiPath stack.
 - **Simulated:**
   - Offline dashboard approval modal.
   - Mock API mode.
+  - Operating-system-level prevention of a deliberately malicious agent bypassing repository instructions.
 - **Strict mode:**
   - No fallback to mock.
   - Missing env vars fail fast.
@@ -42,10 +54,10 @@ The orchestration workflow is modeled in BPMN and executed via the UiPath stack.
 - **Google Gemini 3.5 Flash:** Assisted with Python connector strict separation, test suite, and spec documentation.
 
 ## Challenges
-Creating a non-blocking asynchronous callback mechanism that allows a synchronous BPMN workflow to pause until the agent plan is reviewed required careful endpoint designing. Designing strict real mode tests that fail fast on environment configuration issues without accidentally mocking was also a key challenge.
+Separating task creation from server-side approval verification was a key challenge. The agent must not trust a chat message claiming approval; it verifies the completed Action Center task through UiPath before proceeding. Designing strict real mode tests that fail fast without silently mocking was another challenge.
 
 ## Accomplishments
-Successfully showing that UiPath Maestro can act as the governance layer for modern AI software development. We transitioned coding agents from unsupervised black-boxes into managed, auditable assets.
+Successfully demonstrating live UiPath job creation, Action Center task creation, Data Service persistence, an API-backed approval verifier, and a beginner experience that converts a nontechnical idea into a governed Phase-0 contract.
 
 ## What we learned
 Persistent memory makes AI code generation significantly safer. Feeding past mistakes back to the agent before plan generation reduces repeating the same security or logic bugs.
@@ -61,7 +73,9 @@ Persistent memory makes AI code generation significantly safer. Feeding past mis
 ## Demo video checklist
 - [ ] Present the SSDL coding agent problem.
 - [ ] Show the offline simulation dashboard running.
-- [ ] Explain how Maestro orchestrates and pauses for Action Center.
+- [ ] Show `register`, the pending Action Center task, and blocked `verify`.
+- [ ] Approve in Action Center and show successful API-backed `verify`.
+- [ ] Explain the portable Maestro BPMN model and show the live tenant canvas/run separately.
 - [ ] Display the Data Service tables inside UiPath Automation Cloud.
 - [ ] Display the Maestro BPMN workflow in Studio.
 - [ ] Walk through the repository files.
