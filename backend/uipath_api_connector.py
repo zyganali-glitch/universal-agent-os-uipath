@@ -196,9 +196,10 @@ class UiPathMaestroConnector:
             }
 
         if self.data_service_api_url:
-            endpoint = f"{self.data_service_api_url.rstrip('/')}/{entity_name}"
+            endpoint = f"{self.data_service_api_url.rstrip('/')}/{entity_name}/insert"
         else:
-            endpoint = f"https://cloud.uipath.com/{self.config.tenant_name}/DataService_/api/v1/{entity_name}"
+            org_name = self.config.tenant_name
+            endpoint = f"https://cloud.uipath.com/{org_name}/DefaultTenant/dataservice_/api/EntityService/{entity_name}/insert"
         result = self._post(endpoint, data)
         result["mock"] = False
         return result
@@ -206,18 +207,6 @@ class UiPathMaestroConnector:
     def request_human_approval(self, agent_plan: str) -> Dict[str, Any]:
         if not agent_plan.strip():
             raise ValueError("agent_plan is required")
-
-        payload = {
-            "taskCreateRequest": {
-                "Title": "Phase-0 Alignment Review",
-                "Priority": "High",
-                "TaskCatalogName": "Agent Governance",
-                "Data": {
-                    "AgentProposedPlan": agent_plan,
-                    "RequiresHumanOverride": False,
-                },
-            }
-        }
 
         if self.mock_mode:
             return {
@@ -228,9 +217,46 @@ class UiPathMaestroConnector:
                 "message": "MOCK MODE: human approval simulated.",
             }
 
-        endpoint = f"{self.action_center_odata_url.rstrip('/')}/FormTasks/UiPath.Server.Configuration.OData.CreateFormTask"
+        payload = {
+            "Title": "Phase-0 Alignment Review",
+            "Priority": "High",
+            "Data": {
+                "AgentProposedPlan": agent_plan,
+                "RequiresHumanOverride": False,
+            },
+            "FormLayout": {
+                "components": [
+                    {
+                        "label": "Agent Proposed Plan",
+                        "key": "AgentProposedPlan",
+                        "type": "textarea",
+                        "input": True
+                    },
+                    {
+                        "label": "Requires Human Override",
+                        "key": "RequiresHumanOverride",
+                        "type": "checkbox",
+                        "input": True
+                    },
+                    {
+                        "label": "Submit",
+                        "key": "submit",
+                        "type": "button",
+                        "input": True
+                    }
+                ]
+            }
+        }
+
+        base_url = self.action_center_odata_url.rstrip('/')
+        if base_url.endswith('/odata'):
+            base_url = base_url[:-6]
+        endpoint = f"{base_url}/forms/TaskForms/CreateFormTask"
+        
         result = self._post(endpoint, payload)
         result["mock"] = False
+        if "id" in result:
+            result["task_id"] = str(result["id"])
         return result
 
 

@@ -1,0 +1,150 @@
+STRICT_REAL MODE SMOKE TEST EXECUTION LOG
+Date: 2026-06-20
+
+Command: python backend/labs_smoke_test.py
+
+Output:
+{
+  "mode": "STRICT_REAL",
+  "steps": [
+    {
+      "step": "start_maestro_process",
+      "result": {
+        "@odata.context": "https://cloud.uipath.com/zyganaligroup/DefaultTenant/orchestrator_/odata/$metadata#Jobs",
+        "value": [
+          {
+            "FolderKey": "9cb2e139-9ca9-4c41-9d40-9841aec9f96a",
+            "Key": "9c7d2316-04e7-4577-aa8d-00a2f09cca96",
+            "StartTime": null,
+            "EndTime": null,
+            "State": "Pending",
+            "SubState": null,
+            "JobPriority": "Normal",
+            "SpecificPriorityValue": 45,
+            "ResourceOverwrites": null,
+            "Source": "Manual",
+            "SourceType": "Manual",
+            "BatchExecutionKey": "b7a9440c-6a65-4e6e-a8e6-dc9c5b0707f5",
+            "Info": null,
+            "CreationTime": "2026-06-20T06:05:39.447Z",
+            "StartingScheduleId": null,
+            "ReleaseName": "UniversalAgentOS_Phase0_Flow.process.RPA.Workflow",
+            "Type": "Unattended",
+            "InputArguments": "{\"task\":\"Add Stripe payment integration with idempotency guard\"}",
+            "InputFile": null,
+            "EnvironmentVariables": "",
+            "OutputArguments": null,
+            "OutputFile": null,
+            "HostMachineName": null,
+            "HasMediaRecorded": false,
+            "HasVideoRecorded": null,
+            "PersistenceId": null,
+            "ResumeVersion": null,
+            "StopStrategy": null,
+            "RuntimeType": "Unattended",
+            "RequiresUserInteraction": false,
+            "ReleaseVersionId": null,
+            "EntryPointPath": "Main.xaml",
+            "OrganizationUnitId": 7950291,
+            "OrganizationUnitFullyQualifiedName": null,
+            "Reference": "",
+            "ProcessType": "Process",
+            "TargetRuntime": null,
+            "ProfilingOptions": null,
+            "ResumeOnSameContext": false,
+            "LocalSystemAccount": "",
+            "OrchestratorUserIdentity": null,
+            "RemoteControlAccess": "None",
+            "StartingTriggerId": null,
+            "MaxExpectedRunningTimeSeconds": null,
+            "ServerlessJobType": null,
+            "ParentJobKey": null,
+            "ResumeTime": null,
+            "LastModificationTime": null,
+            "ErrorCode": null,
+            "FpsProperties": null,
+            "TraceId": null,
+            "ParentSpanId": null,
+            "RootSpanId": null,
+            "ParentContext": null,
+            "ProjectKey": "e27f5519-b691-43f7-b35a-e3fbc904bd2c",
+            "CreatorUserKey": "86982efd-a2ee-4f38-8677-544243adf692",
+            "ParentOperationId": null,
+            "EnableAutopilotHealing": false,
+            "FpsContext": null,
+            "AutoHealStatus": null,
+            "Id": 691485842,
+            "JobError": null,
+            "AutopilotForRobots": {
+              "Enabled": true,
+              "HealingEnabled": true
+            }
+          }
+        ],
+        "mock": false
+      }
+    },
+    {
+      "step": "request_human_approval",
+      "result": {
+        "status": 0,
+        "data": {
+          "AgentProposedPlan": "Agent proposes to inspect existing payment module, enforce idempotency, add tests, and wait for approval before code execution.",
+          "RequiresHumanOverride": false
+        },
+        "action": null,
+        "waitJobState": null,
+        "organizationUnitFullyQualifiedName": null,
+        "tags": [],
+        "assignedToUser": null,
+        "claimedByUser": null,
+        "taskSlaDetails": null,
+        "completedByUser": null,
+        "taskAssignmentCriteria": "SingleUser",
+        "taskAssignees": null,
+        "isCurrentUserInAllUserAssignedGroup": null,
+        "taskSource": null,
+        "processingTime": null,
+        "title": "Phase-0 Alignment Review",
+        "type": "FormTask",
+        "priority": "High",
+        "assignedToUserId": null,
+        "claimedByUserId": null,
+        "organizationUnitId": 7950291,
+        "externalTag": null,
+        "creatorJobKey": null,
+        "waitJobKey": null,
+        "lastAssignedTime": null,
+        "completionTime": null,
+        "parentOperationId": null,
+        "key": "582c11b1-c01b-4d6b-b12a-5c65dd16c873",
+        "taskSchemaKey": null,
+        "fpsContext": null,
+        "isDeleted": false,
+        "deleterUserId": null,
+        "deletionTime": null,
+        "lastModificationTime": null,
+        "lastModifierUserId": null,
+        "creationTime": "2026-06-20T06:05:39.6905225Z",
+        "creatorUserId": 213627,
+        "id": 4173555,
+        "mock": false,
+        "task_id": "4173555"
+      }
+    },
+    {
+      "step": "update_master_memory",
+      "result": {
+        "Lesson": "Payment integrations require idempotency checks before implementation.",
+        "UpdatedBy": "02BCB14E-95C3-4D5B-8017-7341A3CFDCCF",
+        "UpdateTime": "2026-06-20T06:05:40.030546+00:00",
+        "CreatedBy": "02BCB14E-95C3-4D5B-8017-7341A3CFDCCF",
+        "Id": "5A67AC0F-6E6C-F111-8FCB-0022489A9A06",
+        "RecordOwner": "02BCB14E-95C3-4D5B-8017-7341A3CFDCCF",
+        "CreateTime": "2026-06-20T06:05:40.030546+00:00",
+        "mock": false
+      }
+    }
+  ],
+  "success": true
+}

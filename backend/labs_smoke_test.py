@@ -53,14 +53,8 @@ def main():
         result["success"] = True
 
     except (UiPathConfigurationError, UiPathApiError, Exception) as exc:
-        err_msg = str(exc)
-        if isinstance(exc, UiPathApiError) and ("2818" in err_msg or "Could not find a machine with Unattended" in err_msg):
-            result["success"] = True
-            result["verified"] = True
-            result["note"] = "API connection verified successfully. Job start request was accepted by Orchestrator but could not execute due to lack of Unattended/NonProduction runtime in the folder."
-        else:
-            result["error"] = f"{type(exc).__name__}: {exc}"
-            result["success"] = False
+        result["error"] = f"{type(exc).__name__}: {exc}"
+        result["success"] = False
 
     output_path = out_dir / "labs_smoke_result.sanitized.json"
     output_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
