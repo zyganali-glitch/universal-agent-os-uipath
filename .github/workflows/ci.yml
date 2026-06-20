@@ -28,7 +28,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest -q
+          python -m pytest -q
 
       - name: Exercise approval gate in mock mode
         env:
