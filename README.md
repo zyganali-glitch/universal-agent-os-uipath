@@ -13,15 +13,14 @@
 
 ## 🎥 Demo Video (Walkthrough Guide)
 
-[![Universal Agent OS Demo](https://img.youtube.com/vi/Y5f5VISnwE4/0.jpg)](https://youtu.be/Y5f5VISnwE4)
+[![Universal Agent OS Demo](https://img.youtube.com/vi/1MDA2yULJAY/0.jpg)](https://youtu.be/1MDA2yULJAY)
 
-Our demo video is a silent screencast. Please read this guide to understand the demonstrated concepts:
+Our demo video proves the end-to-end "Zero-Leak Lock" governance architecture. Please read this guide to understand the demonstrated concepts:
 
-* **`0:00 - 0:56` | Offline Dashboard Simulation (The Developer Experience):** We demonstrate our interactive frontend dashboard. A developer assigns a "Stripe payment integration" task to Gemini CLI. We step through the simulated UiPath Maestro BPMN phases. Notice the **Action Center approval gate** modal: the agent cannot execute code until the Lead Developer reviews the proposed plan against the Collective Memory.
-* **`0:57 - 1:29` | Coding Agents Bonus (Dogfooding):** We show the GitLab Web IDE where the **GitLab Duo AI Agent** is actively helping us build the `sync_markdown_to_uipath.py` connector. This proves our claim that we used coding agents to build the governance system itself.
-* **`1:30 - 1:33` | Real UiPath Data Service:** A quick look at our live UiPath Automation Cloud tenant, showing the `MinefieldHistory` entity schema deployed in Data Service.
-* **`1:34 - 1:37` | Real UiPath Studio (BPMN):** A glimpse of the Maestro BPMN process canvas in UiPath Studio.
-* **`1:38 - End` | Repository Overview:** Scrolling through the project README to highlight our open-source, SSDL-focused architecture.
+* **The Boot Sequence (Strict Real Mode):** A developer asks the agent to build a Stripe payment integration. Instead of writing code, the agent immediately halts and executes the `labs_smoke_test.py` script, connecting to the live UiPath Orchestrator.
+* **UiPath Action Center (Human-in-the-Loop):** We demonstrate the enterprise approval gate. A "Phase-0 Alignment Review" task is created, and the agent refuses to proceed until the human clicks **Approve** in the Action Center.
+* **UiPath Data Service (Collective Memory):** We show the agent's actions and architectural rules recorded permanently in the Data Service entity (`MinefieldHistory`).
+* **Phase-0 & Phase-1 Execution:** Once approved, the agent asks a single scoping question (Pricing Model). After the human locks the Phase-0 contract, the agent successfully generates the required governance scaffolding (`AGENT_OS_PLAN_TEMPLATE.md` and roadmap).
 
 ---
 
@@ -181,27 +180,21 @@ To connect to a real UiPath tenant, strict real mode must be enabled. **Strict m
 
 ## 📸 Proof of Concept (Live UiPath Cloud)
 
-*(Below are the artifacts showing UiPath Labs configuration evidence / screenshot evidence and the Coding Agent IDE)*
+*(Below are the artifacts showing UiPath Labs configuration evidence and the Coding Agent IDE)*
 
 **1. UiPath Data Service (Central Governance Entity)**
-We use Data Service to store the `MinefieldHistory` and `CodeSoul` rules globally. Here is our live entity configured in the UiPath Automation Cloud Data Fabric:
-![Data Service Entity](docs/data_service.png)
+We use Data Service to store the `MinefieldHistory` and `CodeSoul` rules globally. Here is our live entity configured in the UiPath Automation Cloud Data Fabric, proving the agent's actions are recorded:
+![Data Service Entity](docs/uipath4.png)
 
-**2. UiPath Maestro BPMN (Process Orchestrator)**
-The entire AI orchestration lifecycle is built around a Maestro BPMN workflow (`Phase-0 Alignment Review`), acting as the enterprise gatekeeper.
-![Maestro BPMN Flow](docs/maestro_flow.png)
+**2. UiPath Action Center (The Approval Gate)**
+The agent cannot proceed without human approval. This is the live Action Center task awaiting the Lead Developer's signature:
+![Action Center Approval](docs/uipath2.png)
 
-**3. UiPath Action Center & Dashboard Simulation**
-For the frontend developer experience, we created an interactive terminal dashboard. In production, this ties into Action Center for human approval:
-![Agent Dashboard](docs/screenshot1.png)
-
-**2. GitLab Duo / Gemini Building the Connector**
-This entire project was pair-programmed with AI. Here is the interaction in the GitLab Web IDE with the Duo agent actively syncing the governance model.
-![GitLab Duo IDE](docs/screenshot2.png)
-
-**3. Repository View**
-Our project resides securely in GitLab/GitHub, maintaining full history and SSDL components.
-![GitLab Repo](docs/screenshot3.png)
+**3. The Agent Submitting to Governance (Phase-0 & Phase-1)**
+The agent successfully respects the "Zero-Leak Lock", asks exactly one scoping question, locks the contract, and generates the `AGENT_OS_PLAN_TEMPLATE.md` roadmap.
+![Agent Compliance 1](docs/uipath01.png)
+![Agent Compliance 2](docs/uipath02.png)
+![Agent Compliance 3](docs/uipath03.png)
 
 ## 🔮 Future Vision
 
