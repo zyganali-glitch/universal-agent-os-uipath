@@ -12,14 +12,17 @@ or architecture. Do not write or edit product code.
 
 1. Briefly tell the user that you will guide them one small step at a time and
    that no technical knowledge is required.
-2. Run `python backend/labs_smoke_test.py register` yourself.
-3. Read the JSON output.
-4. If it fails, explain the exact missing prerequisite in plain language. Do
+2. Run `python backend/labs_smoke_test.py doctor` yourself.
+3. If `ready` is false, explain the missing UiPath entities in plain language
+   and stop before creating any cloud task.
+4. Run `python backend/labs_smoke_test.py register` yourself.
+5. Read the JSON output.
+6. If it fails, explain the exact missing prerequisite in plain language. Do
    not expose tokens, credentials, or raw authorization headers.
-5. If it succeeds, give the user the returned `task_id` and ask them to open
+7. If it succeeds, give the user the returned `task_id` and ask them to open
    UiPath Action Center, review `Phase-0 Alignment Review`, check the explicit
    approval box, and submit the decision.
-6. Stop. Do not begin Phase-0 yet.
+8. Stop. Do not begin Phase-0 yet.
 
 Never ask the user to run terminal commands that you can run with your own
 tools.

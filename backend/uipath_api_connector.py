@@ -94,6 +94,24 @@ class UiPathMaestroConnector:
         self.orchestrator_odata_url = os.getenv("UIPATH_ORCHESTRATOR_ODATA_URL", "").strip() or self.base_url
         self.data_service_api_url = os.getenv("UIPATH_DATA_SERVICE_API_URL", "").strip()
         self.action_center_odata_url = os.getenv("UIPATH_ACTION_CENTER_ODATA_URL", "").strip() or self.orchestrator_odata_url
+        self.memory_entities = {
+            "code_soul": os.getenv(
+                "UIPATH_CODE_SOUL_ENTITY",
+                "CodeSoul",
+            ).strip(),
+            "minefield": os.getenv(
+                "UIPATH_MINEFIELD_ENTITY",
+                "MinefieldHistory",
+            ).strip(),
+            "persona": os.getenv(
+                "UIPATH_PERSONA_ENTITY",
+                "Persona",
+            ).strip(),
+            "state": os.getenv(
+                "UIPATH_STATE_MEMORY_ENTITY",
+                "StateMemory",
+            ).strip(),
+        }
         
         token = self.config.access_token
         if not self.config.mock_mode and not token and self.config.client_id and self.config.client_secret:
@@ -289,6 +307,12 @@ class UiPathMaestroConnector:
             "count": len(records),
             "mock": False,
         }
+
+    def read_governance_memory(self, limit: int = 10) -> Dict[str, Any]:
+        memories = {}
+        for key, entity_name in self.memory_entities.items():
+            memories[key] = self.read_master_memory(entity_name, limit=limit)
+        return memories
 
     def request_human_approval(self, agent_plan: str) -> Dict[str, Any]:
         if not agent_plan.strip():

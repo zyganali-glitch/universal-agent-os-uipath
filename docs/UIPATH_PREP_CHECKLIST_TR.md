@@ -43,9 +43,11 @@ Sadece portable BPMN varsa bunu canlı Maestro run olarak adlandırma.
 ```powershell
 python -m pytest -q
 python -m py_compile backend/uipath_api_connector.py backend/labs_smoke_test.py backend/phase0_interview.py
+python backend/labs_smoke_test.py doctor
 ```
 
-İki komut da başarılı olmalı.
+Test ve compile komutları başarılı olmalı; doctor çıktısında dört entity için de
+`available: true` ve genel olarak `ready: true` görünmeli.
 
 ## 6. Video sekmeleri
 

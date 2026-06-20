@@ -31,8 +31,10 @@ Videonun iddiası, ajanın repo kurallarını kendisinin keşfetmesidir.
 
 1. IDE ajanına `Bir fikrim var, birlikte yapalım.` yaz.
 2. Ajanın teknik soru sormadan repo kurallarını okumasını bekle.
-3. Ajan `register` komutunu kendi çalıştırmalı.
-4. Çıktıda `gate_status: AWAITING_HUMAN` ve Task ID görünmeli.
+3. Ajan önce salt-okunur `doctor` kontrolünü kendi çalıştırmalı; `ready: true`
+   görünmeli.
+4. Ajan ardından `register` komutunu kendi çalıştırmalı.
+5. Çıktıda `gate_status: AWAITING_HUMAN` ve Task ID görünmeli.
 
 **Bu noktada videoyu durdurma.** Task ID ekranda okunacak kadar kısa bekle.
 

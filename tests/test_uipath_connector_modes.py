@@ -174,3 +174,22 @@ def test_cloud_urls_use_separate_organization_and_tenant(monkeypatch):
         "https://cloud.uipath.com/acme/Production/orchestrator_/odata"
     )
     assert connector.action_center_odata_url == connector.orchestrator_odata_url
+
+
+def test_memory_entity_api_names_are_configurable(monkeypatch):
+    monkeypatch.setenv("UIPATH_MOCK_MODE", "true")
+    monkeypatch.setenv("UIPATH_CODE_SOUL_ENTITY", "CodeSoulApiName")
+    monkeypatch.setenv("UIPATH_MINEFIELD_ENTITY", "MinefieldApiName")
+    monkeypatch.setenv("UIPATH_PERSONA_ENTITY", "PersonaApiName")
+    monkeypatch.setenv("UIPATH_STATE_MEMORY_ENTITY", "StateApiName")
+
+    connector = UiPathMaestroConnector()
+    memories = connector.read_governance_memory(limit=1)
+
+    assert connector.memory_entities == {
+        "code_soul": "CodeSoulApiName",
+        "minefield": "MinefieldApiName",
+        "persona": "PersonaApiName",
+        "state": "StateApiName",
+    }
+    assert set(memories) == {"code_soul", "minefield", "persona", "state"}

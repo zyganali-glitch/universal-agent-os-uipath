@@ -34,6 +34,7 @@ jobs:
         env:
           UIPATH_MOCK_MODE: "true"
         run: |
+          python backend/labs_smoke_test.py doctor
           python backend/labs_smoke_test.py register --task "CI approval gate"
           python backend/labs_smoke_test.py verify
 

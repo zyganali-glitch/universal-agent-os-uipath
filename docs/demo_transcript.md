@@ -4,9 +4,9 @@
 - **Narrative:** "The user does not need to know software terminology. They start with one sentence: 'Bir fikrim var, birlikte yapalım.' The repository tells the IDE agent how to register governance, request human approval, and begin a safe interview."
 - **Visuals:** Show the single prompt in the IDE and the agent discovering the root governance contract.
 
-## 0:30–1:05 — Register the real governance gate
-- **Narrative:** "The coding agent runs the register command before scoping. Strict Real Mode reads Code Soul and Minefield History from Data Service, starts the deployed UiPath process, and creates an Action Center task. The command returns `AWAITING_HUMAN`; no execution grant exists."
-- **Visuals:** Run `python backend/labs_smoke_test.py register`. Zoom into the returned job ID, task ID, memory counts, and `gate_status`.
+## 0:30–1:05 — Verify readiness and register the real governance gate
+- **Narrative:** "The coding agent first runs a read-only doctor that verifies all four memory entities. Strict Real Mode then reads the governance memory, starts the deployed UiPath process, and creates an Action Center task. The command returns `AWAITING_HUMAN`; no Phase-0 permission exists."
+- **Visuals:** Briefly show `doctor: ready`, then the `register` output. Zoom into the Job ID, Task ID, memory counts, and `gate_status`.
 
 ## 1:05–1:35 — Prove that chat confirmation is not enough
 - **Narrative:** "Even if a user says they approved, the agent does not trust chat. The verification command reads the Action Center task from UiPath. While it is pending, Phase-0 stays blocked."

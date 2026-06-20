@@ -53,14 +53,20 @@ def register_gate(connector: UiPathMaestroConnector, task_description: str):
         "success": False,
     }
 
-    code_soul = connector.read_master_memory("CodeSoul", limit=10)
-    minefields = connector.read_master_memory("MinefieldHistory", limit=10)
+    memories = connector.read_governance_memory(limit=10)
+    code_soul = memories["code_soul"]
+    minefields = memories["minefield"]
+    persona = memories["persona"]
+    state_memory = memories["state"]
     result["steps"].append(
         {
             "step": "read_master_memory",
             "result": {
                 "code_soul_count": code_soul["count"],
                 "minefield_count": minefields["count"],
+                "persona_count": persona["count"],
+                "state_memory_count": state_memory["count"],
+                "entities": connector.memory_entities,
                 "mock": connector.mock_mode,
             },
         }
@@ -72,6 +78,8 @@ def register_gate(connector: UiPathMaestroConnector, task_description: str):
             "task": task_description,
             "codeSoulCount": code_soul["count"],
             "minefieldCount": minefields["count"],
+            "personaCount": persona["count"],
+            "stateMemoryCount": state_memory["count"],
         },
     )
     result["steps"].append(
@@ -170,7 +178,7 @@ def verify_gate(connector: UiPathMaestroConnector, task_id=None):
 
     if not decision["approved"]:
         rejection = connector.update_master_memory(
-            "MinefieldHistory",
+            connector.memory_entities["minefield"],
             {
                 "MinefieldId": f"REJECT-{resolved_task_id}"[-20:],
                 "Lesson": (
@@ -198,7 +206,7 @@ def verify_gate(connector: UiPathMaestroConnector, task_id=None):
         return result, 1
 
     execution_grant = connector.update_master_memory(
-        "StateMemory",
+        connector.memory_entities["state"],
         {
             "SessionCount": 1,
             "LastTaskDescription": gate_state["task_description"],
@@ -242,11 +250,48 @@ def verify_gate(connector: UiPathMaestroConnector, task_id=None):
     return result, 0
 
 
+def doctor(connector: UiPathMaestroConnector):
+    checks = {}
+    ready = True
+    for key, entity_name in connector.memory_entities.items():
+        try:
+            result = connector.read_master_memory(entity_name, limit=1)
+            checks[key] = {
+                "entity": entity_name,
+                "available": True,
+                "sample_count": result["count"],
+            }
+        except UiPathApiError as exc:
+            ready = False
+            message = str(exc)
+            checks[key] = {
+                "entity": entity_name,
+                "available": False,
+                "error": message.split(":", 1)[0],
+            }
+
+    return {
+        "mode": "MOCK" if connector.mock_mode else "STRICT_REAL",
+        "command": "doctor",
+        "ready": ready,
+        "checks": checks,
+        "message": (
+            "All four governance entities are reachable."
+            if ready
+            else "Create or configure the missing Data Service entities before recording."
+        ),
+    }
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Register and verify the Universal Agent OS approval gate."
     )
     subparsers = parser.add_subparsers(dest="command")
+    subparsers.add_parser(
+        "doctor",
+        help="Read-only readiness check for the four governance entities.",
+    )
 
     register = subparsers.add_parser(
         "register",
@@ -277,6 +322,11 @@ def main():
 
     try:
         connector = UiPathMaestroConnector()
+
+        if command == "doctor":
+            result = doctor(connector)
+            print_and_save(result)
+            raise SystemExit(0 if result["ready"] else 1)
 
         if command == "register":
             result = register_gate(connector, getattr(args, "task", DEFAULT_TASK))
