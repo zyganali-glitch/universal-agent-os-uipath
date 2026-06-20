@@ -13,7 +13,7 @@
 
 ## 🎥 Demo Video (Walkthrough Guide)
 
-[![Universal Agent OS Demo](https://img.youtube.com/vi/1MDA2yULJAY/0.jpg)](https://youtu.be/1MDA2yULJAY)
+[![Universal Agent OS Demo](docs/uipath01.png)](https://youtu.be/1MDA2yULJAY)
 
 Our demo video proves the end-to-end "Zero-Leak Lock" governance architecture. Please read this guide to understand the demonstrated concepts:
 
@@ -178,23 +178,34 @@ To connect to a real UiPath tenant, strict real mode must be enabled. **Strict m
 
 ---
 
-## 📸 Proof of Concept (Live UiPath Cloud)
+## 📸 Proof of Concept (End-to-End Execution Flow)
 
-*(Below are the artifacts showing UiPath Labs configuration evidence and the Coding Agent IDE)*
+*(Below is the chronological evidence of the AgentHack demo, showing the exact flow from the IDE to UiPath and back)*
 
-**1. UiPath Data Service (Central Governance Entity)**
-We use Data Service to store the `MinefieldHistory` and `CodeSoul` rules globally. Here is our live entity configured in the UiPath Automation Cloud Data Fabric, proving the agent's actions are recorded:
-![Data Service Entity](docs/uipath4.png)
+**1. The Strict Boot Sequence & Task Creation**
+The agent attempts to start the project but is halted by the `AGENTS.md` Zero-Leak Lock. It runs the Python connector, generating a real task in UiPath.
+![Boot Sequence](docs/uipath1.png)
+![Task Generation](docs/uipath3.png)
 
 **2. UiPath Action Center (The Approval Gate)**
-The agent cannot proceed without human approval. This is the live Action Center task awaiting the Lead Developer's signature:
-![Action Center Approval](docs/uipath2.png)
+The agent cannot proceed. The task sits in Action Center awaiting the Lead Developer's manual approval.
+![Action Center Pending](docs/uipath2.png)
+![Action Center Approval](docs/uipath5.png)
 
-**3. The Agent Submitting to Governance (Phase-0 & Phase-1)**
-The agent successfully respects the "Zero-Leak Lock", asks exactly one scoping question, locks the contract, and generates the `AGENT_OS_PLAN_TEMPLATE.md` roadmap.
-![Agent Compliance 1](docs/uipath01.png)
-![Agent Compliance 2](docs/uipath02.png)
-![Agent Compliance 3](docs/uipath03.png)
+**3. UiPath Data Service (Collective Memory)**
+Simultaneously, the agent's session and the architectural rules are logged into the UiPath Data Fabric `MinefieldHistory` entity.
+![Data Service Entity](docs/uipath4.png)
+![Data Service Rows](docs/uipath6.png)
+
+**4. Phase-0: Scoping & Alignment**
+With the lock lifted by human approval, the agent asks exactly ONE scoping question regarding the Stripe pricing model, obeying the workflow rules.
+![Phase 0 Question](docs/uipath7.png)
+![Phase 0 Lock](docs/uipath01.png)
+
+**5. Phase-1: Generating the Governance Plan**
+Once Phase-0 contracts are locked, the agent generates the required `AGENT_OS_PLAN_TEMPLATE.md` and master roadmaps, refusing to write raw code until the planning phase is fully validated.
+![Plan Generation 1](docs/uipath02.png)
+![Plan Generation 2](docs/uipath03.png)
 
 ## 🔮 Future Vision
 
