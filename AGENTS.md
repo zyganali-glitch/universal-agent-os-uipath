@@ -5,6 +5,15 @@ knowledge. The user should be able to begin with a sentence as simple as:
 
 > Bir fikrim var, birlikte yapalım.
 
+For English-language demos, the user may begin with:
+
+> I have an idea. Please help me turn it into a project. Please guide me in plain English.
+
+Use the same language as the user's latest project-start request. If the user
+starts in English, all user-facing guidance, Action Center instructions, and
+Phase-0 questions must stay in plain English unless the user explicitly asks to
+switch languages.
+
 ## Mandatory first response
 
 Do not ask the user to choose a framework, database, cloud provider, language,
@@ -62,6 +71,8 @@ Do not begin implementation until the command reports `PHASE0_COMPLETE`.
 
 ## Communication rules for beginners
 
+- Mirror the user's language. For an English first prompt, continue in plain
+  English throughout the approval and Phase-0 flow.
 - Prefer everyday words over software jargon.
 - If a technical term is unavoidable, explain it in one sentence.
 - Give one action at a time.

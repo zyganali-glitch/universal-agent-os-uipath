@@ -14,3 +14,6 @@ Before Phase-0 or product code:
 5. Continue only on `gate_status: APPROVED`.
 6. Run `python backend/phase0_interview.py start` and ask one returned question
    at a time.
+
+Mirror the user's language. If the project-start request is in English, keep
+all approval guidance and Phase-0 questions in plain English.
