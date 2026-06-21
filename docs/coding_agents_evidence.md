@@ -8,7 +8,7 @@ This project was built with assistance from coding agents. The purpose of this d
 
 | Agent | Claimed use | Evidence status | Evidence file |
 |---|---|---|---|
-| GitLab Duo | Assisted with connector/governance sync implementation | Visual evidence in submitted screenshots/video | `uipath02.png` |
+| GitLab Duo | Assisted with connector/governance sync implementation | Prompt excerpts, commit history, and submitted video | [`agent_prompt_log_gemini.md`](agent_prompt_log_gemini.md) |
 | Gemini (Antigravity) | Assisted with prototype planning, code generation, and strict mode testing | Prompt excerpts available | `agent_prompt_log_gemini.md` |
 | GitHub Copilot / Cursor | Integration target and optional development assistant | N/A | Manual evidence required |
 
@@ -16,7 +16,7 @@ This project was built with assistance from coding agents. The purpose of this d
 
 | File | Agent contribution | Evidence |
 |---|---|---|
-| `backend/sync_markdown_to_uipath.py` | Governance sync script design and iteration | GitLab Duo visual evidence (`uipath02.png`) |
+| `backend/sync_markdown_to_uipath.py` | Governance sync script design and iteration | Prompt excerpts and public commit history |
 | `backend/uipath_api_connector.py` & `backend/labs_smoke_test.py` | Connector structure and Strict Real Mode iteration | Prompt excerpts (`agent_prompt_log_gemini.md`) plus commit history |
 | `README.md` & `docs/demo_transcript.md` | Narrative construction and sequential demo mapping | Prompt excerpts (`agent_prompt_log_gemini.md`) plus commit history |
 

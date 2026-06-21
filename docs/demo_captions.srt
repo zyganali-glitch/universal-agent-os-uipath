@@ -1,0 +1,47 @@
+1
+00:00:00,000 --> 00:00:08,000
+A nontechnical user starts with one simple sentence.
+
+2
+00:00:08,000 --> 00:00:22,000
+The IDE agent reads the repository rules, checks UiPath readiness, and registers a live governance gate.
+
+3
+00:00:22,000 --> 00:00:38,000
+No project work starts until a real UiPath Action Center approval exists.
+
+4
+00:00:38,000 --> 00:01:00,000
+Action Center hosts the explicit human approval task with a required approval checkbox.
+
+5
+00:01:00,000 --> 00:01:16,000
+The decision is submitted in UiPath. The agent does not trust a chat message as approval.
+
+6
+00:01:16,000 --> 00:01:31,000
+UiPath Data Fabric stores governance memory: CodeSoul, MinefieldHistory, Persona, and StateMemory.
+
+7
+00:01:31,000 --> 00:01:46,000
+The BPMN/agentic process canvas documents the orchestration design for the governed flow.
+
+8
+00:01:46,000 --> 00:02:25,000
+After API verification succeeds, Phase 0 begins with one plain-language question at a time.
+
+9
+00:02:25,000 --> 00:03:01,000
+The beginner answers practical business questions; the agent records each answer before continuing.
+
+10
+00:03:01,000 --> 00:03:21,000
+Phase 0 completes and creates a formal master plan before any raw code is written.
+
+11
+00:03:21,000 --> 00:03:45,000
+The repository contains the agent rules, UiPath connector, tests, and evidence for the governance flow.
+
+12
+00:03:45,000 --> 00:03:51,000
+Universal Agent OS: beginner idea, governed approval, auditable plan.

@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Track-2%20·%20Maestro%20BPMN-FA4616?style=for-the-badge&logo=uipath&logoColor=white" />
-  <img src="https://img.shields.io/badge/Demo%20Mode-Offline%20Mock-orange?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Live%20Gate-API%20Verified-orange?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Strict%20Real%20Mode-No%20Mock%20Fallback-red?style=for-the-badge" />
   <img src="https://img.shields.io/badge/UiPath-AgentHack%202026-0066FF?style=for-the-badge&logo=uipath&logoColor=white" />
   <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" />
@@ -35,22 +35,25 @@ points are included in [`CLAUDE.md`](CLAUDE.md), [`GEMINI.md`](GEMINI.md),
 [`.github/copilot-instructions.md`](.github/copilot-instructions.md), and
 [`.cursor/rules/universal-agent-os.mdc`](.cursor/rules/universal-agent-os.mdc).
 
-## 🎥 Demo Video (Walkthrough Guide)
+## 🎥 Final Competition Demo
 
-[![Universal Agent OS Demo](docs/uipath01.png)](https://youtu.be/1MDA2yULJAY)
+[![Watch the Universal Agent OS UiPath demo](docs/demo_screenshots/final/02_action_center_explicit_approval.png)](https://www.youtube.com/watch?v=d-AZzY-8DgU)
 
-For the refreshed competition recording, use the Turkish
-[step-by-step video director](docs/DEMO_VIDEO_DIRECTOR_TR.md) and
-[UiPath preparation checklist](docs/UIPATH_PREP_CHECKLIST_TR.md).
+**[Watch the 3:51 final demo on YouTube](https://www.youtube.com/watch?v=d-AZzY-8DgU)**.
+The recording uses burned-in English captions and shows the real beginner flow
+from the IDE agent to UiPath and back.
 
-The demo shows a live UiPath integration run plus the coding-agent governance sequence. The repository now separates gate registration from API-backed approval verification:
-
-> **Submission note:** the linked video captures the original strict-real integration run. The current repository adds server-side approval verification after that recording. A refreshed competition video should show both the blocked pre-approval `verify` call and the successful post-approval call.
+The demo shows a live UiPath integration run plus the coding-agent governance
+sequence. Gate registration and API-backed approval verification are separate:
 
 * **The Boot Sequence (Strict Real Mode):** A beginner says, "I have an idea. Please help me turn it into a project." Instead of asking for technical details or writing code, the agent immediately checks UiPath readiness and registers a Phase-0 approval gate.
 * **UiPath Action Center (Human-in-the-Loop):** A "Phase-0 Alignment Review" task is created. A later verification command reads the completed task from UiPath and grants Phase-0 access only when its `Approved` field is true.
-* **UiPath Data Service (Collective Memory):** A read-only doctor checks all four configured memory entities. The connector loads Code Soul, Minefield History, Persona, and State Memory before creating the gate, then records the verified outcome.
+* **UiPath Data Fabric / Data Service (Collective Memory):** A read-only doctor checks all four configured memory entities. The connector loads Code Soul, Minefield History, Persona, and State Memory before creating the gate, then records the verified outcome.
 * **Phase-0 Interview:** Once approved, the agent starts an auditable eight-question beginner interview. It asks only one plain-language question at a time and persists every answer before planning.
+
+The screenshots used below are direct frames from the final recording. See the
+full [evidence manifest](docs/evidence_manifest.md) for the boundary between
+implemented code, live tenant evidence, and portable specifications.
 
 ---
 
@@ -100,7 +103,7 @@ The governance model is expressed as **UiPath Maestro BPMN** and connected to li
 | Layer | Status | Evidence |
 |---|---|---|
 | UiPath Data Service entity schemas | Implemented in repo | [`uipath_project/entities`](uipath_project/entities) |
-| Maestro BPMN process model | Portable BPMN 2.0 spec; live Maestro canvas/run requires external tenant evidence | [`uipath_project/workflows/phase0_alignment.bpmn`](uipath_project/workflows/phase0_alignment.bpmn) |
+| Maestro BPMN process model | Portable BPMN 2.0 spec plus an Agentic Process canvas shown in the final demo; no completed Maestro runtime instance is claimed | [`uipath_project/workflows/phase0_alignment.bpmn`](uipath_project/workflows/phase0_alignment.bpmn), [`docs/demo_screenshots/final/04_bpmn_agentic_process_canvas.png`](docs/demo_screenshots/final/04_bpmn_agentic_process_canvas.png) |
 | Python connector | Live create/read/update plus Action Center decision verification; Mock and Strict Real modes | [`backend/uipath_api_connector.py`](backend/uipath_api_connector.py) |
 | Frontend dashboard | Interactive offline simulation | [`frontend/agent_builder_mockup.html`](frontend/agent_builder_mockup.html) |
 | Action Center approval | Offline UI simulation plus live task creation and API-backed decision verification | [`backend/labs_smoke_test.py`](backend/labs_smoke_test.py), [`docs/evidence_manifest.md`](docs/evidence_manifest.md) |
@@ -132,10 +135,10 @@ To ensure true enterprise governance, Universal Agent OS relies heavily on the c
 
 | UiPath Component | Role in Universal Agent OS |
 |---|---|
-| **UiPath Maestro (BPMN)** | **Process Model:** Defines the intended lifecycle from memory retrieval through human review and approved/rejected outcomes. The portable model is in the repo; live canvas/run evidence is collected from the UiPath tenant. |
+| **UiPath Maestro / Agentic Process (BPMN)** | **Process Model:** Defines the intended lifecycle from memory retrieval through human review and approved/rejected outcomes. The portable model is in the repo and the final demo shows the UiPath BPMN design canvas. |
 | **UiPath Data Service** | **Collective Memory Storage:** Stores and serves the 4 Master Memory Files as structured entities (`CodeSoul`, `MinefieldHistory`, etc.), allowing programmatic retrieval and updates by the AI. |
 | **UiPath Action Center** | **Human Approval Gate:** Hosts the high-priority review task. The Python verifier reads the completed task and requires an explicit `Approved=true` decision. |
-| **UiPath Orchestrator API** | **Runtime Trigger:** Starts the deployed process and provides the auditable job record used in strict real mode. |
+| **UiPath Orchestrator API** | **Runtime Submission:** Submits the deployed process and exposes job records. The captured tenant showed submitted jobs in `Pending`; this repository does not claim a completed unattended runtime execution. |
 
 ## 🏆 Why This Wins
 
@@ -147,7 +150,7 @@ To ensure true enterprise governance, Universal Agent OS relies heavily on the c
 - Portable end-to-end BPMN lifecycle model for **Maestro**
 - Live human-in-the-loop task creation and decision verification via **Action Center**
 - Live entity read/write operations via **Data Service**
-- Live process triggering and job evidence via **Orchestrator**
+- Live process submission and visible pending job evidence via **Orchestrator**
 
 ### Coding Agents Bonus (Built-With) ✅
 - Native integration designed for **Cursor** (Claude), **Gemini CLI**, and **GitHub Copilot**.
@@ -159,6 +162,7 @@ To ensure true enterprise governance, Universal Agent OS relies heavily on the c
 ```
 universal-agent-os-uipath/
 ├── AGENTS.md                           # Universal IDE-agent beginner bootstrap
+├── AGENT_OS_PLAN_TEMPLATE.md            # Plan-before-code governance template
 ├── CLAUDE.md / GEMINI.md               # Agent-specific auto-discovery entry points
 ├── README.md                           # You are here
 ├── .cursor/rules/                      # Cursor always-on governance adapter
@@ -173,7 +177,9 @@ universal-agent-os-uipath/
 ├── frontend/
 │   └── agent_builder_mockup.html       # Interactive SSDL dashboard (demo)
 ├── docs/
-│   └── architecture_bpmn.mermaid       # BPMN sequence diagram
+│   ├── architecture_bpmn.mermaid       # BPMN sequence diagram
+│   ├── evidence_manifest.md             # Honest claim-to-evidence map
+│   └── demo_screenshots/final/          # Final video evidence frames
 └── uipath_project/
     ├── entities/                        # UiPath Data Service entity schemas
     │   ├── code_soul.json
@@ -238,34 +244,69 @@ To connect to a real UiPath tenant, strict real mode must be enabled. **Strict m
 
 ---
 
-## 📸 Proof of Concept (End-to-End Execution Flow)
+## 📸 Final Demo Evidence
 
-*(Below is the chronological evidence of the AgentHack demo, showing the exact flow from the IDE to UiPath and back)*
+The following frames are taken from the
+[final competition demo](https://www.youtube.com/watch?v=d-AZzY-8DgU) and
+present the governed flow in chronological order.
 
-**1. The Strict Boot Sequence & Task Creation**
-The agent attempts to start the project but is halted by the `AGENTS.md` Zero-Leak Lock. It runs the Python connector, generating a real task in UiPath.
-![Boot Sequence](docs/uipath1.png)
-![Task Generation](docs/uipath3.png)
+**1. A beginner prompt triggers the repository contract**
 
-**2. UiPath Action Center (The Approval Gate)**
-The agent cannot proceed. The task sits in Action Center awaiting the Lead Developer's manual approval.
-![Action Center Pending](docs/uipath2.png)
-![Action Center Approval](docs/uipath5.png)
+The IDE agent reads the rules, runs the UiPath readiness doctor, and registers
+a real `Phase-0 Alignment Review` task instead of asking for frameworks or
+writing product code.
 
-**3. UiPath Data Service (Collective Memory)**
-The live connector reads governance records before constructing the review plan. After server-side approval verification, it writes the grant to `StateMemory`; rejected plans are recorded in `MinefieldHistory`.
-![Data Service Entity](docs/uipath4.png)
-![Data Service Rows](docs/uipath6.png)
+![Agent registers the UiPath approval gate](docs/demo_screenshots/final/01_agent_registers_uipath_gate.png)
 
-**4. Phase-0: Scoping & Alignment**
-With the lock lifted by human approval, the agent asks exactly ONE plain-language scoping question, obeying the workflow rules.
-![Phase 0 Question](docs/uipath7.png)
-![Phase 0 Lock](docs/uipath01.png)
+**2. Action Center provides explicit human authorization**
 
-**5. Phase-1: Generating the Governance Plan**
-Once Phase-0 contracts are locked, the agent generates the required `AGENT_OS_PLAN_TEMPLATE.md` and master roadmaps, refusing to write raw code until the planning phase is fully validated.
-![Plan Generation 1](docs/uipath02.png)
-![Plan Generation 2](docs/uipath03.png)
+The exact task is reviewed in UiPath Action Center. Approval requires the
+explicit permission checkbox and a submitted decision.
+
+![Completed Action Center approval](docs/demo_screenshots/final/02_action_center_explicit_approval.png)
+
+**3. Data Fabric exposes the four governance-memory entities**
+
+`CodeSoul`, `MinefieldHistory`, `Persona`, and `StateMemory` are visible in the
+tenant. The connector verifies their availability before registering the gate.
+
+![UiPath Data Fabric governance entities](docs/demo_screenshots/final/03_data_fabric_governance_memory.png)
+
+**4. The BPMN / Agentic Process canvas documents orchestration**
+
+The UiPath design canvas and the repository's portable BPMN model express the
+governed lifecycle. This is design evidence; no completed Maestro runtime
+instance is claimed.
+
+![UiPath Agentic Process BPMN canvas](docs/demo_screenshots/final/04_bpmn_agentic_process_canvas.png)
+
+**5. Verified approval unlocks a plain-language Phase-0 interview**
+
+After the UiPath API returns `APPROVED`, the agent asks one everyday-language
+question at a time and records each answer before continuing.
+
+![Beginner-friendly Phase-0 interview](docs/demo_screenshots/final/05_phase0_plain_language_interview.png)
+
+**6. Phase-0 ends with a master plan, not premature code**
+
+The eight-question interview completes and produces a formal implementation
+plan artifact before raw product implementation begins.
+
+![Phase-0 complete and master plan created](docs/demo_screenshots/final/06_phase0_complete_master_plan.png)
+
+**7. The enforcement contract lives in the repository**
+
+The same beginner bootstrap, approval verification, and one-question-at-a-time
+rules are discoverable by supported coding-agent IDEs.
+
+![Repository agent rules](docs/demo_screenshots/final/07_repository_agent_rules.png)
+
+**8. Public evidence stays linked and reviewable**
+
+The repository documents what is live, what is portable, and what remains a
+prototype boundary so judges can audit the claims without guesswork.
+
+![README evidence section](docs/demo_screenshots/final/08_readme_evidence_section.png)
 
 ## 🔮 Future Vision
 

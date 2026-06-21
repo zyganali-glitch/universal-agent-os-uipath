@@ -1,38 +1,41 @@
-# Demo Transcript / Walkthrough
+# Final Demo Transcript / Walkthrough
 
-## 0:00–0:30 — Beginner promise
-- **Narrative:** "The user does not need to know software terminology. They start with one sentence: 'Bir fikrim var, birlikte yapalım.' The repository tells the IDE agent how to register governance, request human approval, and begin a safe interview."
-- **Visuals:** Show the single prompt in the IDE and the agent discovering the root governance contract.
+Video: https://www.youtube.com/watch?v=d-AZzY-8DgU
 
-## 0:30–1:05 — Verify readiness and register the real governance gate
-- **Narrative:** "The coding agent first runs a read-only doctor that verifies all four memory entities. Strict Real Mode then reads the governance memory, starts the deployed UiPath process, and creates an Action Center task. The command returns `AWAITING_HUMAN`; no Phase-0 permission exists."
-- **Visuals:** Briefly show `doctor: ready`, then the `register` output. Zoom into the Job ID, Task ID, memory counts, and `gate_status`.
+## 0:00–0:38 — Beginner promise and live gate registration
+- **Caption:** A nontechnical user starts with one simple sentence.
+- **Visuals:** The IDE agent reads the repository contract, runs the UiPath readiness doctor, and registers the real Action Center gate.
 
-## 1:05–1:35 — Prove that chat confirmation is not enough
-- **Narrative:** "Even if a user says they approved, the agent does not trust chat. The verification command reads the Action Center task from UiPath. While it is pending, Phase-0 stays blocked."
-- **Visuals:** Run `python backend/labs_smoke_test.py verify` before completing the task and show `AWAITING_HUMAN`.
+## 0:38–1:16 — Explicit human approval
+- **Caption:** Action Center hosts the explicit human approval task with a required approval checkbox.
+- **Visuals:** The exact `Phase-0 Alignment Review` task is reviewed and submitted in UiPath.
 
-## 1:35–2:05 — Human review in Action Center
-- **Narrative:** "A lead developer reviews the proposed plan, explicitly checks the approval field, and submits the decision."
-- **Visuals:** Open the exact task ID in Action Center, show the plan, check `I approve this plan and grant execution permission`, and submit.
+## 1:16–1:31 — Governance memory
+- **Caption:** UiPath Data Fabric stores governance memory: CodeSoul, MinefieldHistory, Persona, and StateMemory.
+- **Visuals:** The tenant-level entity list shows the four configured memory entities.
 
-## 2:05–2:35 — Verify and persist the grant
-- **Narrative:** "The same verification command now reads the completed server-side task and requires `Approved=true`. Only then does it write the approved audit state to Data Service and return `APPROVED`."
-- **Visuals:** Run `python backend/labs_smoke_test.py verify`, then show the new StateMemory row in Data Service.
+## 1:31–1:46 — BPMN / Agentic Process design
+- **Caption:** The BPMN/agentic process canvas documents the orchestration design for the governed flow.
+- **Visuals:** The UiPath design canvas is shown as process-model evidence. The demo does not claim a completed Maestro runtime instance.
 
-## 2:35–3:05 — Maestro model and coding-agent bonus
-- **Narrative:** "The repository includes the portable BPMN 2.0 lifecycle model, and the UiPath tenant shows the live process canvas/run. We dogfooded the project using Gemini and GitLab Duo."
-- **Visuals:** Show the live Maestro canvas/run, then briefly show coding-agent evidence and the public GitHub repository.
+## 1:46–3:01 — Verified Phase-0 interview
+- **Caption:** After API verification succeeds, Phase 0 begins with one plain-language question at a time.
+- **Visuals:** The beginner answers practical business questions and the agent records every answer before continuing.
 
-## 3:05–3:30 — Phase-0 begins
-- **Narrative:** "Only after verified approval does the beginner interview start. The agent asks one everyday-language question, saves the answer, and advances to exactly one next question."
-- **Visuals:** Answer the first question and show the second question returned by the Phase-0 engine.
+## 3:01–3:21 — Master plan before code
+- **Caption:** Phase 0 completes and creates a formal master plan before any raw code is written.
+- **Visuals:** The completion message and implementation-plan artifact are shown.
+
+## 3:21–3:51 — Repository evidence
+- **Caption:** The repository contains the agent rules, UiPath connector, tests, and evidence for the governance flow.
+- **Visuals:** The public repository rules and refreshed evidence section close the demo.
 
 ## What the video proves
-- Live Orchestrator process triggering, Data Service reads/writes, and Action Center decision verification.
-- Maestro BPMN lifecycle model plus separate tenant evidence of the live canvas/run.
-- Honest separation between local interactive demo (offline simulation) and backend integration code.
-- Verification of agent involvement during the build process.
+- Live Action Center task creation and API-backed decision verification.
+- Visible Data Fabric governance-memory entities.
+- Portable BPMN plus UiPath Agentic Process design-canvas evidence.
+- A one-question-at-a-time Phase-0 interview and generated master plan.
+- Repository-native agent rules, connector code, tests, and public evidence.
 
 ## What remains external/manual
 - Operating-system-level enforcement against a deliberately malicious agent.
@@ -42,4 +45,4 @@
 - Use voiceover or burned-in captions.
 - Keep IDs and statuses large enough to read.
 - Show a pending verification failure before approval and a successful verification afterward.
-- Show the live Maestro canvas/run and the portable BPMN file as two distinct artifacts.
+- If a completed Maestro runtime is added later, show its instance ID separately from the BPMN design canvas.

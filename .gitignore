@@ -23,3 +23,8 @@ run_artifacts/
 # OS
 .DS_Store
 Thumbs.db
+
+# Local demo production artifacts
+docs/*.mp4
+docs/video_review/
+docs/demo_screenshots/demo_*.png

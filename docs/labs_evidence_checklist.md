@@ -1,20 +1,19 @@
-# UiPath Labs Kanıt Kontrol Listesi
+# UiPath Evidence Checklist
 
-Devpost tesliminden önce bu kontrol listesindeki eksikleri tamamlayıp durumları güncelleyin.
+Final demo: https://www.youtube.com/watch?v=d-AZzY-8DgU
 
-| Kanıt Türü | Gerekli mi? | Durum | Dosya Yolu / ID |
-|---|---:|---|---|
-| UiPath Labs kiracı ekran görüntüsü | Evet | Manuel işlem gerekli | `docs/labs/tenant.png` |
-| Data Service tablo listesi ekran görüntüsü | Evet | Manuel işlem gerekli | `docs/labs/data_service_entities.png` |
-| MinefieldHistory kayıtları ekran görüntüsü | Evet | Manuel işlem gerekli | `docs/labs/minefield_history_entity.png` |
-| Maestro BPMN tasarım ekran görüntüsü | Evet | Manuel işlem gerekli | `docs/labs/maestro_bpmn_canvas.png` |
-| Orchestrator süreç çalışma numarası (Job ID) | Evet | Tamamlandı | Job ID: 691485842 |
-| Canlı Maestro süreç çalışma numarası (Run ID) | Evet | Manuel işlem gerekli | Yeni demo çalışmasından alınacak |
-| Action Center onay görevi ekran görüntüsü | Evet | Manuel işlem gerekli | `docs/labs/action_center_task.png` |
-| Action Center görev numarası (Task ID) | Evet | Tamamlandı | Task ID: 4173555 |
-| Data Service canlı yazma kanıtı | Evet | Tamamlandı | Minefield record ID: 5A67AC0F-6E6C-F111-8FCB-0022489A9A06 |
-| Onay sonrası `StateMemory` grant kaydı | Evet | Manuel işlem gerekli | Yeni `verify` çalışmasından alınacak |
-| Onay öncesi bloke edilen `verify` çıktısı | Evet | Manuel işlem gerekli | `gate_status: AWAITING_HUMAN` |
-| Onay sonrası başarılı `verify` çıktısı | Evet | Manuel işlem gerekli | `gate_status: APPROVED` |
-| Sıkı gerçek mod terminal çıktısı (Log) | Evet | Tamamlandı | [strict_real_mode_output.txt](labs/strict_real_mode_output.txt) |
-| Labs ekranlarını içeren güncellenmiş demo videosu | Şiddetle Önerilir | Manuel işlem gerekli | YouTube Linki |
+| Evidence | Status | Repository artifact / limitation |
+|---|---|---|
+| Beginner IDE prompt and governed registration | Complete | [`demo_screenshots/final/01_agent_registers_uipath_gate.png`](demo_screenshots/final/01_agent_registers_uipath_gate.png) |
+| Action Center explicit approval | Complete | Task `4205597`; [`demo_screenshots/final/02_action_center_explicit_approval.png`](demo_screenshots/final/02_action_center_explicit_approval.png) |
+| Data Fabric entity list | Complete | [`demo_screenshots/final/03_data_fabric_governance_memory.png`](demo_screenshots/final/03_data_fabric_governance_memory.png) |
+| CodeSoul, MinefieldHistory, Persona, StateMemory availability | Complete | Visible in the Data Fabric frame and checked by `labs_smoke_test.py doctor` |
+| API-backed approval verification | Complete | Shown in the final demo and implemented by `labs_smoke_test.py verify` |
+| Phase-0 one-question-at-a-time interview | Complete | [`demo_screenshots/final/05_phase0_plain_language_interview.png`](demo_screenshots/final/05_phase0_plain_language_interview.png) |
+| Phase-0 master-plan artifact | Complete | [`demo_screenshots/final/06_phase0_complete_master_plan.png`](demo_screenshots/final/06_phase0_complete_master_plan.png) |
+| BPMN / Agentic Process design canvas | Complete as design evidence | [`demo_screenshots/final/04_bpmn_agentic_process_canvas.png`](demo_screenshots/final/04_bpmn_agentic_process_canvas.png); no completed Maestro runtime is claimed |
+| Orchestrator jobs | Partial tenant evidence | Submitted jobs were visible as `Pending`; no completed unattended execution is claimed |
+| Public repository and agent rules | Complete | [`demo_screenshots/final/07_repository_agent_rules.png`](demo_screenshots/final/07_repository_agent_rules.png) |
+| Final under-five-minute video | Complete | 3:51, burned-in English captions |
+
+For the full claim boundary, use [`evidence_manifest.md`](evidence_manifest.md).
