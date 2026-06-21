@@ -47,7 +47,7 @@ The demo shows a live UiPath integration run plus the coding-agent governance se
 
 > **Submission note:** the linked video captures the original strict-real integration run. The current repository adds server-side approval verification after that recording. A refreshed competition video should show both the blocked pre-approval `verify` call and the successful post-approval call.
 
-* **The Boot Sequence (Strict Real Mode):** A developer asks the agent to build a Stripe payment integration. Instead of writing code, the agent immediately halts and executes the `labs_smoke_test.py` script, connecting to the live UiPath Orchestrator.
+* **The Boot Sequence (Strict Real Mode):** A beginner says, "I have an idea. Please help me turn it into a project." Instead of asking for technical details or writing code, the agent immediately checks UiPath readiness and registers a Phase-0 approval gate.
 * **UiPath Action Center (Human-in-the-Loop):** A "Phase-0 Alignment Review" task is created. A later verification command reads the completed task from UiPath and grants Phase-0 access only when its `Approved` field is true.
 * **UiPath Data Service (Collective Memory):** A read-only doctor checks all four configured memory entities. The connector loads Code Soul, Minefield History, Persona, and State Memory before creating the gate, then records the verified outcome.
 * **Phase-0 Interview:** Once approved, the agent starts an auditable eight-question beginner interview. It asks only one plain-language question at a time and persists every answer before planning.
@@ -200,7 +200,7 @@ python -m py_compile backend/sync_markdown_to_uipath.py backend/uipath_api_conne
 If you do not have UiPath tokens configured, explicitly enable Demo Mode (`UIPATH_MOCK_MODE="true"`).
 1. **Clone** this repository.
 2. **Open** `frontend/agent_builder_mockup.html` in your browser.
-3. **Select** a coding agent and type a task (try: "Add Stripe payment integration").
+3. **Select** a coding agent and type a nontechnical request (try: "I have an idea. Please help me turn it into a project.").
 4. **Click** "Start Maestro Process" and use the **Next Step** button to manually progress through the BPMN phases.
 5. **Run** `python backend/sync_markdown_to_uipath.py` to see the simulated syncing of local governance rules to Data Service.
 
@@ -258,7 +258,7 @@ The live connector reads governance records before constructing the review plan.
 ![Data Service Rows](docs/uipath6.png)
 
 **4. Phase-0: Scoping & Alignment**
-With the lock lifted by human approval, the agent asks exactly ONE scoping question regarding the Stripe pricing model, obeying the workflow rules.
+With the lock lifted by human approval, the agent asks exactly ONE plain-language scoping question, obeying the workflow rules.
 ![Phase 0 Question](docs/uipath7.png)
 ![Phase 0 Lock](docs/uipath01.png)
 

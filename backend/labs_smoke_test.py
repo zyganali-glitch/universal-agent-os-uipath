@@ -14,7 +14,7 @@ ARTIFACT_DIR = Path("run_artifacts")
 GATE_STATE_PATH = ARTIFACT_DIR / "approval_gate.sanitized.json"
 RESULT_PATH = ARTIFACT_DIR / "labs_smoke_result.sanitized.json"
 PHASE0_STATE_PATH = ARTIFACT_DIR / "phase0_contract.sanitized.json"
-DEFAULT_TASK = "Add Stripe payment integration with idempotency guard"
+DEFAULT_TASK = "Start a beginner-friendly Phase 0 project discovery interview"
 
 
 def sanitize(value):
@@ -87,12 +87,15 @@ def register_gate(connector: UiPathMaestroConnector, task_description: str):
     )
 
     plan = (
-        f"Requested task: {task_description}\n"
+        f"Requested user intent: {task_description}\n"
         f"Loaded Code Soul records: {code_soul['count']}\n"
         f"Loaded Minefield History records: {minefields['count']}\n"
-        "Proposed plan: inspect the existing payment module, enforce "
-        "idempotency, add tests, and make no code changes until this "
-        "Action Center decision is verified through the UiPath API."
+        f"Loaded Persona records: {persona['count']}\n"
+        f"Loaded State Memory records: {state_memory['count']}\n"
+        "Proposed plan: ask one plain-language Phase 0 question at a time, "
+        "capture the user's goal, constraints, and success criteria, then "
+        "save a sanitized project contract. No code changes are allowed until "
+        "this Action Center decision is verified through the UiPath API."
     )
     approval = connector.request_human_approval(plan)
     result["steps"].append(
@@ -183,11 +186,11 @@ def verify_gate(connector: UiPathMaestroConnector, task_id=None):
                 "MinefieldId": f"REJECT-{resolved_task_id}"[-20:],
                 "Lesson": (
                     decision["reviewer_notes"]
-                    or "The proposed coding plan was rejected by a human reviewer."
+                    or "The proposed Phase 0 plan was rejected by a human reviewer."
                 ),
                 "Severity": "high",
                 "OriginAgent": "labs_smoke_test",
-                "AffectedModules": "[\"payments\", \"checkout\"]",
+                "AffectedModules": "[\"phase0\", \"approval_gate\"]",
                 "DateDiscovered": datetime.now(timezone.utc).isoformat(),
                 "IsActive": True,
             },

@@ -131,6 +131,37 @@ def test_pending_action_center_task_keeps_execution_blocked(monkeypatch):
     assert decision["approved"] is False
 
 
+def test_approval_form_requires_explicit_checkbox(monkeypatch):
+    monkeypatch.setenv("UIPATH_MOCK_MODE", "false")
+    monkeypatch.setenv("UIPATH_TENANT_NAME", "tenant")
+    monkeypatch.setenv("UIPATH_OU_ID", "ou")
+    monkeypatch.setenv("UIPATH_ACCESS_TOKEN", "token")
+    monkeypatch.setenv(
+        "UIPATH_ACTION_CENTER_ODATA_URL",
+        "https://example.invalid/odata",
+    )
+
+    connector = UiPathMaestroConnector()
+    captured = {}
+
+    def fake_post(url, payload):
+        captured["url"] = url
+        captured["payload"] = payload
+        return {"id": 123}
+
+    monkeypatch.setattr(connector, "_post", fake_post)
+    approval = connector.request_human_approval("Start Phase 0 discovery.")
+
+    components = {
+        item["key"]: item
+        for item in captured["payload"]["FormLayout"]["components"]
+    }
+    assert approval["task_id"] == "123"
+    assert components["Approved"]["validate"]["required"] is True
+    assert components["submit"]["action"] == "submit"
+    assert components["submit"]["disableOnInvalid"] is True
+
+
 def test_data_service_read_uses_official_response_shape(monkeypatch):
     monkeypatch.setenv("UIPATH_MOCK_MODE", "false")
     monkeypatch.setenv("UIPATH_TENANT_NAME", "tenant")

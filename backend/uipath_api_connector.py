@@ -347,7 +347,10 @@ class UiPathMaestroConnector:
                         "label": "I approve this plan and grant execution permission",
                         "key": "Approved",
                         "type": "checkbox",
-                        "input": True
+                        "input": True,
+                        "validate": {
+                            "required": True
+                        }
                     },
                     {
                         "label": "Reviewer Notes",
@@ -359,7 +362,9 @@ class UiPathMaestroConnector:
                         "label": "Submit Decision",
                         "key": "submit",
                         "type": "button",
-                        "input": True
+                        "input": True,
+                        "action": "submit",
+                        "disableOnInvalid": True
                     }
                 ]
             }
