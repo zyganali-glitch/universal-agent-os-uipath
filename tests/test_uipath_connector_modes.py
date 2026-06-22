@@ -68,6 +68,85 @@ def test_real_mode_never_falls_back_to_mock(monkeypatch):
         connector.start_maestro_process("DemoFlow", {"task": "demo"})
 
 
+def test_client_credentials_fetch_token_with_org_scoped_endpoint(monkeypatch):
+    monkeypatch.setenv("UIPATH_MOCK_MODE", "false")
+    monkeypatch.setenv("UIPATH_ORGANIZATION_NAME", "acme")
+    monkeypatch.setenv("UIPATH_TENANT_NAME", "Production")
+    monkeypatch.setenv("UIPATH_OU_ID", "ou")
+    monkeypatch.delenv("UIPATH_ACCESS_TOKEN", raising=False)
+    monkeypatch.setenv("UIPATH_CLIENT_ID", "app-id")
+    monkeypatch.setenv("UIPATH_CLIENT_SECRET", "app-secret")
+    monkeypatch.setenv(
+        "UIPATH_OAUTH_SCOPES",
+        "OR.Default DataService.Data.Read DataService.Data.Write",
+    )
+
+    captured = {}
+
+    class FakeResponse:
+        status_code = 200
+
+        def json(self):
+            return {"access_token": "fresh-token"}
+
+    def fake_post(url, data=None, headers=None, timeout=None):
+        captured["url"] = url
+        captured["data"] = data
+        captured["headers"] = headers
+        return FakeResponse()
+
+    monkeypatch.setattr("requests.post", fake_post)
+
+    connector = UiPathMaestroConnector()
+
+    assert captured["url"] == (
+        "https://cloud.uipath.com/acme/identity_/connect/token"
+    )
+    assert captured["data"] == {
+        "grant_type": "client_credentials",
+        "client_id": "app-id",
+        "client_secret": "app-secret",
+        "scope": "OR.Default DataService.Data.Read DataService.Data.Write",
+    }
+    assert captured["headers"]["Content-Type"] == (
+        "application/x-www-form-urlencoded"
+    )
+    assert connector.headers["Authorization"] == "Bearer fresh-token"
+
+
+def test_client_credentials_omits_scope_when_not_configured(monkeypatch):
+    monkeypatch.setenv("UIPATH_MOCK_MODE", "false")
+    monkeypatch.setenv("UIPATH_ORGANIZATION_NAME", "acme")
+    monkeypatch.setenv("UIPATH_TENANT_NAME", "Production")
+    monkeypatch.setenv("UIPATH_OU_ID", "ou")
+    monkeypatch.delenv("UIPATH_ACCESS_TOKEN", raising=False)
+    monkeypatch.setenv("UIPATH_CLIENT_ID", "app-id")
+    monkeypatch.setenv("UIPATH_CLIENT_SECRET", "app-secret")
+    monkeypatch.delenv("UIPATH_OAUTH_SCOPES", raising=False)
+
+    captured = {}
+
+    class FakeResponse:
+        status_code = 200
+
+        def json(self):
+            return {"access_token": "fresh-token"}
+
+    def fake_post(url, data=None, headers=None, timeout=None):
+        captured["data"] = data
+        return FakeResponse()
+
+    monkeypatch.setattr("requests.post", fake_post)
+
+    UiPathMaestroConnector()
+
+    assert captured["data"] == {
+        "grant_type": "client_credentials",
+        "client_id": "app-id",
+        "client_secret": "app-secret",
+    }
+
+
 def test_completed_action_center_task_requires_explicit_approval(monkeypatch):
     monkeypatch.setenv("UIPATH_MOCK_MODE", "false")
     monkeypatch.setenv("UIPATH_TENANT_NAME", "tenant")

@@ -8,7 +8,7 @@ This specification aligns with **Track 2: UiPath Maestro BPMN**. The orchestrato
 
 ### Prototype implementation status
 
-This document describes the target Maestro BPMN behavior. The repository provides a portable BPMN 2.0 model plus a strict Python connector that currently proves live Orchestrator triggering, Data Service reads/writes, Action Center task creation, and server-side decision verification. A live Maestro canvas/run is tenant-hosted evidence and is not represented as a proprietary export in this repository.
+This document describes the target Maestro BPMN behavior. The repository provides a portable BPMN 2.0 model plus a strict Python connector that currently proves live Orchestrator RPA job submission, Data Service reads/writes, Action Center task creation, and server-side decision verification. The RPA job submission is not a Maestro process instance. A published, deployed, and completed Maestro runtime instance remains the primary open implementation step.
 
 ## 3. UiPath components
 - **UiPath Maestro (BPMN):** The main process engine managing state transitions, conditional gateways, and user/service tasks.
@@ -70,11 +70,19 @@ No Phase-0 interview or code modification is permitted until a physical human re
 Every process run is tracked in the UiPath Orchestrator Jobs ledger. The Action Center task ID is permanently bound to the Data Service record state for forensic and compliance review.
 
 ## 13. Real UiPath Labs deployment checklist
-- [ ] Connect to UiPath Automation Cloud tenant.
-- [ ] Deploy entities using JSON schemas in `uipath_project/entities/`.
+- [x] Connect to UiPath Automation Cloud tenant.
+- [x] Deploy entities using JSON schemas in `uipath_project/entities/`.
 - [ ] Import `phase0_alignment.bpmn` or manually build the process flow canvas.
-- [ ] Configure environment variables in `.env` or Orchestrator assets.
-- [ ] Verify that Action Center is enabled and cataloged for Agent Governance.
+- [ ] Create and deploy the `Phase0.Alignment.Review` Action App.
+- [ ] Bind every Maestro task to a real implementation.
+- [ ] Debug approved and rejected paths.
+- [ ] Publish and deploy the Agentic Process.
+- [ ] Configure execution identity for child processes.
+- [ ] Run a Maestro instance through its human task to `Completed`.
+- [x] Configure local strict-real environment variables.
+- [x] Verify live Data Fabric access and Action Center task completion.
+
+See `docs/maestro_end_to_end_runbook_tr.md` for the exact continuation path.
 
 ## 14. Evidence required for final submission
 - Portable BPMN process file (`phase0_alignment.bpmn`).

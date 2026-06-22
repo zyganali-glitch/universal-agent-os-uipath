@@ -13,6 +13,8 @@ Final demo: https://www.youtube.com/watch?v=d-AZzY-8DgU
 | Phase-0 master-plan artifact | Complete | [`demo_screenshots/final/06_phase0_complete_master_plan.png`](demo_screenshots/final/06_phase0_complete_master_plan.png) |
 | BPMN / Agentic Process design canvas | Complete as design evidence | [`demo_screenshots/final/04_bpmn_agentic_process_canvas.png`](demo_screenshots/final/04_bpmn_agentic_process_canvas.png); no completed Maestro runtime is claimed |
 | Orchestrator jobs | Partial tenant evidence | Submitted jobs were visible as `Pending`; no completed unattended execution is claimed |
+| June 22 strict-real API validation | Complete | [`labs/live_validation_2026-06-22.md`](labs/live_validation_2026-06-22.md); task `4222982` completed and approval was written to StateMemory |
+| Published/deployed Maestro runtime instance | Open | Follow [`maestro_end_to_end_runbook_tr.md`](maestro_end_to_end_runbook_tr.md); capture an instance ending as `Completed` |
 | Public repository and agent rules | Complete | [`demo_screenshots/final/07_repository_agent_rules.png`](demo_screenshots/final/07_repository_agent_rules.png) |
 | Final under-five-minute video | Complete | 3:51, burned-in English captions |
 

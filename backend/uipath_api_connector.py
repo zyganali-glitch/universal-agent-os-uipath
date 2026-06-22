@@ -29,6 +29,7 @@ class UiPathConfig:
     access_token: str
     client_id: str
     client_secret: str
+    oauth_scopes: str
     mock_mode: bool
     release_key: str = ""
     request_timeout_seconds: int = 30
@@ -54,6 +55,7 @@ class UiPathConfig:
             access_token=os.getenv("UIPATH_ACCESS_TOKEN", "").strip(),
             client_id=os.getenv("UIPATH_CLIENT_ID", "").strip(),
             client_secret=os.getenv("UIPATH_CLIENT_SECRET", "").strip(),
+            oauth_scopes=os.getenv("UIPATH_OAUTH_SCOPES", "").strip(),
             mock_mode=mock_mode,
             release_key=os.getenv("UIPATH_RELEASE_KEY", "").strip(),
             request_timeout_seconds=int(os.getenv("UIPATH_TIMEOUT_SECONDS", "30")),
@@ -124,12 +126,17 @@ class UiPathMaestroConnector:
         }
 
     def _fetch_oauth_token(self) -> str:
-        url = "https://cloud.uipath.com/identity_/connect/token"
+        url = (
+            f"https://cloud.uipath.com/"
+            f"{self.config.organization_name}/identity_/connect/token"
+        )
         payload = {
             "grant_type": "client_credentials",
             "client_id": self.config.client_id,
             "client_secret": self.config.client_secret,
         }
+        if self.config.oauth_scopes:
+            payload["scope"] = self.config.oauth_scopes
         headers = {
             "Content-Type": "application/x-www-form-urlencoded"
         }
@@ -143,7 +150,10 @@ class UiPathMaestroConnector:
             if response.status_code != 200:
                 raise UiPathConfigurationError(f"OAuth failed with status {response.status_code}: {response.text}")
             res_data = response.json()
-            return res_data.get("access_token", "")
+            token = res_data.get("access_token", "")
+            if not token:
+                raise UiPathConfigurationError("OAuth response did not include access_token")
+            return token
         except Exception as exc:
             raise UiPathConfigurationError(f"OAuth authentication failed: {exc}") from exc
 

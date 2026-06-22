@@ -31,12 +31,20 @@ Hizmet görünmüyorsa: Automation Cloud `Admin` → tenant → `Services` →
 ## 4. Maestro
 
 - Maestro servisi tenant üzerinde erişilebilir.
-- Canlı iddia kullanılacaksa modeling canvas üzerinde süreç oluşturulmuş ve
-  yayınlanmış.
+- Modeling canvas üzerindeki her task gerçek bir implementation'a bağlı;
+  production akışında `None` bırakılmamış.
+- Action Center adımı deploy edilmiş bir Action App kullanan Maestro User Task.
+- Süreç publish edilmiş ve aynı Orchestrator folder'a deploy edilmiş.
+- Child RPA/agent bağımlılıklarının execution identity ve runtime ayarları
+  çözülmüş.
 - İzleme kanıtı için `Process instances` veya process `Monitoring` ekranı
   erişilebilir.
+- En az bir approved veya rejected instance terminal durumda `Completed`.
 
-Sadece portable BPMN varsa bunu canlı Maestro run olarak adlandırma.
+Sadece portable BPMN, design canvas veya ayrı Orchestrator job varsa bunu canlı
+Maestro run olarak adlandırma. Ayrıntılı uygulama sırası için
+[`maestro_end_to_end_runbook_tr.md`](maestro_end_to_end_runbook_tr.md) dosyasını
+kullan.
 
 ## 5. Yerel repo
 

@@ -67,6 +67,9 @@ Aşağıdaki çevre değişkenlerini doldurun:
 - `UIPATH_OU_ID` (Klasör/Organizasyon ID'niz)
 - `UIPATH_ACCESS_TOKEN` (API'den alacağınız token)
 - Alternatif olarak `UIPATH_CLIENT_ID` ve `UIPATH_CLIENT_SECRET`
+- `UIPATH_OAUTH_SCOPES` (opsiyonel; boş bırakıldığında external application'a
+  atanmış application scope'ları istenir; tenant açık değer istiyorsa Admin
+  ekranındaki tam adları kullanın)
 - `UIPATH_RELEASE_KEY` (release sorgu yetkisi yoksa gerekli)
 - `UIPATH_TIMEOUT_SECONDS=30`
 
@@ -86,6 +89,13 @@ python backend/labs_smoke_test.py verify
 `doctor` dört entity'nin API üzerinden erişilebilir olduğunu doğrular. Sonraki komut Action Center görevini oluşturur ve `AWAITING_HUMAN` döndürür. Görevi tamamlamadan çalıştırılan `verify` komutu kilidi kapalı tutmalıdır. Action Center'da açık onay kutusunu işaretleyip kararı gönderdikten sonra `verify`, UiPath API'sinden kararı okuyarak `APPROVED` döndürmelidir.
 
 *(Komutlar token veya hassas bilgileri sızdırmadan sonuçları `run_artifacts/` altındaki sanitize edilmiş JSON dosyalarına yazar.)*
+
+Bu smoke akışı canlı API entegrasyonunu doğrular; Orchestrator Jobs API ile
+başlatılan RPA job'unu gerçek Maestro process instance'ı olarak sunmaz. Gerçek
+Maestro uçtan uca çalışma için
+[`maestro_end_to_end_runbook_tr.md`](maestro_end_to_end_runbook_tr.md)
+dosyasındaki Action App, implementation binding, publish, deploy ve Process
+Instances adımlarını tamamlayın.
 
 ## Adım 7 — Kanıtları Toplama
 `docs/labs_evidence_checklist.md` dosyasındaki listeyi takip ederek ekran görüntülerini alıp ilgili klasöre yerleştirin.

@@ -14,6 +14,22 @@ starts in English, all user-facing guidance, Action Center instructions, and
 Phase-0 questions must stay in plain English unless the user explicitly asks to
 switch languages.
 
+## Existing project continuation
+
+The mandatory bootstrap below applies only when a user is starting a genuinely
+new product idea. It does not apply to repository maintenance, competition
+submission work, live UiPath configuration, or a request to continue the
+existing Universal Agent OS project.
+
+When the user says "kaldığımız yerden devam et", "repoya bak", "handoff'u oku",
+or otherwise asks to resume this project:
+
+1. Read [`HANDOFF.md`](HANDOFF.md) first.
+2. Inspect the current Git status and recent commits.
+3. Continue from the first unchecked handoff step.
+4. Do not create another Action Center bootstrap task or start the Phase-0
+   interview unless the user explicitly requests a fresh bootstrap demo.
+
 ## Mandatory first response
 
 Do not ask the user to choose a framework, database, cloud provider, language,

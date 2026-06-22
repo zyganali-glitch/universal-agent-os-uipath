@@ -44,6 +44,8 @@ The universal contract is in [`AGENTS.md`](AGENTS.md). IDE-specific entry
 points are included in [`CLAUDE.md`](CLAUDE.md), [`GEMINI.md`](GEMINI.md),
 [`.github/copilot-instructions.md`](.github/copilot-instructions.md), and
 [`.cursor/rules/universal-agent-os.mdc`](.cursor/rules/universal-agent-os.mdc).
+Maintainers resuming the competition build should start with
+[`HANDOFF.md`](HANDOFF.md).
 
 ## 🎥 Final Competition Demo
 
@@ -295,11 +297,18 @@ UIPATH_MOCK_MODE=false
 UIPATH_ORGANIZATION_NAME=your_organization_slug
 UIPATH_TENANT_NAME=DefaultTenant
 UIPATH_OU_ID=your_folder_or_organization_unit_id
-UIPATH_ACCESS_TOKEN=your_oauth_token
-UIPATH_CLIENT_ID=
-UIPATH_CLIENT_SECRET=
+UIPATH_ACCESS_TOKEN=your_optional_one_hour_bearer_token
+UIPATH_CLIENT_ID=your_external_app_id
+UIPATH_CLIENT_SECRET=your_external_app_secret
+UIPATH_OAUTH_SCOPES=
 UIPATH_RELEASE_KEY=your_optional_release_key
 ```
+
+Use either `UIPATH_ACCESS_TOKEN` or `UIPATH_CLIENT_ID` plus `UIPATH_CLIENT_SECRET`. Client credentials are preferred for repeatable judging runs because the connector can request a fresh bearer token from UiPath Identity Server.
+`UIPATH_OAUTH_SCOPES` is optional. Leave it blank to request the confidential
+application's assigned scopes, as verified on the project tenant. If a tenant
+requires an explicit value, copy the exact application-scope names from
+Automation Cloud Admin instead of guessing legacy scope names.
 
 Optional endpoint overrides are supported when the tenant uses custom URLs:
 
