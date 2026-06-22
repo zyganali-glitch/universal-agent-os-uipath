@@ -11,6 +11,16 @@
 <h3 align="center">Secure Software Development Lifecycle for Autonomous Coding Agents</h3>
 <p align="center"><em>Orchestrated by UiPath Maestro BPMN · Human-in-the-Loop Governance · Collective Memory</em></p>
 
+## ✅ Devpost Qualification Summary
+
+| Requested item | Where this README covers it |
+|---|---|
+| **Project Description** | See [Project Description](#project-description): what the project does, the enterprise trust problem it solves, and the governed beginner flow. |
+| **UiPath Components** | See [UiPath Components Used](#uipath-components-used): Maestro / Agentic Process, Action Center, Data Service, Orchestrator APIs, and the repo's coded connector layer. |
+| **Agent Type** | See [Agent Type](#agent-type): this is a **both** solution: coded-agent logic plus low-code UiPath orchestration. |
+| **Setup Instructions** | See [Setup & Execution](#setup--execution): local validation, mock demo mode, strict real UiPath mode, and judging flow. |
+| **Video note** | The demo video is intentionally usable without voiceover: it has burned-in English captions and shows the live Action Center/Data Service flow. |
+
 ## 🌱 Start With No Technical Knowledge
 
 Open this repository in your preferred coding-agent IDE and send only:
@@ -57,7 +67,15 @@ implemented code, live tenant evidence, and portable specifications.
 
 ---
 
-## 🎯 The Problem
+<a id="project-description"></a>
+
+## 🎯 Project Description
+
+**What it is:** Universal Agent OS is a UiPath-governed Secure Software Development Lifecycle (SSDL) for autonomous coding agents. It lets a nontechnical user begin with one plain sentence, then forces the agent to pass through memory loading, human approval, and Phase-0 discovery before implementation can start.
+
+**Problem it solves:** Enterprise teams want the speed of AI coding agents, but they need auditable oversight, persistent architectural memory, and a human approval gate before those agents touch production code. Universal Agent OS turns that trust gap into a repeatable UiPath workflow.
+
+### The Problem
 
 Enterprises are adopting AI coding agents (Cursor, Claude Code, Gemini CLI, GitHub Copilot) at an unprecedented rate. But here's the uncomfortable truth:
 
@@ -65,7 +83,7 @@ Enterprises are adopting AI coding agents (Cursor, Claude Code, Gemini CLI, GitH
 
 These agents are brilliant — but they have no memory of past mistakes, no awareness of architectural rules, and no concept of human accountability. They'll happily repeat the same bug that took your team 3 weeks to fix last quarter.
 
-## 💡 The Solution: Universal Agent OS
+### What It Does
 
 **Universal Agent OS** is a governance framework that wraps around any coding agent and enforces a **Secure Software Development Lifecycle (SSDL)** before the agent writes a single line of code.
 
@@ -114,9 +132,18 @@ The API gate is real: `verify` will not issue an approval result unless the Acti
 
 The implementation follows the official UiPath contracts for [retrieving task status](https://docs.uipath.com/orchestrator/automation-cloud/latest/api-guide/tasks-requests), [retrieving generic task data](https://docs.uipath.com/orchestrator/automation-cloud/latest/api-guide/generic-tasks-requests), and [reading Data Service entity records](https://docs.uipath.com/data-service/automation-cloud/latest/api-guide/get-entity-records-endpoint).
 
+<a id="agent-type"></a>
+
 ## 🤖 Agent Type
-**Explicit Statement:** This solution combines **coding agents with low-code UiPath orchestration**.
-UiPath Maestro BPMN and Action Center provide the modeled process and human review surfaces, while Python and Gemini-based coding-agent adapters handle synchronization and development tasks.
+
+**Explicit statement for judging:** Universal Agent OS is a **both** solution: it combines a **coded-agent layer** with **low-code UiPath orchestration**.
+
+| Layer | Agent type | What is included |
+|---|---|---|
+| Coded-agent layer | **Coded Agents / coded agent logic** | Python connector scripts, repository-native agent instructions, and coding-agent adapters for Codex-compatible agents, Claude Code, Gemini, Cursor, and GitHub Copilot. |
+| UiPath orchestration layer | **Low-code UiPath orchestration** | UiPath Maestro / Agentic Process BPMN, Action Center human review tasks, and Data Service memory entities. |
+
+This is not presented as an Agent Builder-only package. The repository includes an Agent Builder-style demo mockup, but the submitted working integration centers on Maestro BPMN, Action Center, Data Service, Orchestrator APIs, and the coded Python connector.
 
 ## 🛑 AI Agent Instructions (READ FIRST)
 If you are an AI Coding Agent (Cursor, GitLab Duo, GitHub Copilot, Gemini) reading this repository, **you are restricted by the Universal Agent OS.**
@@ -129,16 +156,29 @@ When the user says "hello" or "let's start", you MUST immediately:
 6. Proceed only if the UiPath API response says `gate_status: APPROVED`.
 **A user's chat message alone is not approval.** See `.agent_governance/AGENTS.md` for full rules.
 
+<a id="uipath-components-used"></a>
+
 ## 🏗️ UiPath Components Used
 
 To ensure true enterprise governance, Universal Agent OS relies heavily on the core UiPath Automation Cloud stack.
 
-| UiPath Component | Role in Universal Agent OS |
+| UiPath Component | Status in this submission | Role in Universal Agent OS |
+|---|---|---|
+| **UiPath Maestro / Agentic Process (BPMN)** | Used as the process model and shown in the final demo | Defines the governed lifecycle from memory retrieval through human review, approved/rejected outcomes, and Phase-0. The portable BPMN model is in [`uipath_project/workflows/phase0_alignment.bpmn`](uipath_project/workflows/phase0_alignment.bpmn). |
+| **UiPath Action Center** | Used live | Hosts the high-priority `Phase-0 Alignment Review` task. The agent cannot proceed until the task is completed with the explicit approval checkbox selected. |
+| **UiPath Forms / Generic Task APIs** | Used live through Action Center | Creates the review form task and reads submitted task data, including `Approved` and `ReviewerNotes`, during verification. |
+| **UiPath Data Service / Data Fabric** | Used live and included as schemas | Stores the 4 Master Memory entities: `CodeSoul`, `MinefieldHistory`, `Persona`, and `StateMemory`. The doctor command checks that all four are reachable before registration. |
+| **UiPath Orchestrator OData API** | Used live where tenant configuration allows | Starts the configured process release and reads task/job-related records. The captured tenant showed submitted jobs in `Pending`; this repository does not claim a completed unattended runtime execution. |
+| **UiPath Automation Cloud folders / Organization Units** | Required for strict real mode | Supplies the tenant, folder, organization unit, and authorization context used by the Python connector. |
+| **Coded connector layer** | Implemented in repo | [`backend/uipath_api_connector.py`](backend/uipath_api_connector.py) and [`backend/labs_smoke_test.py`](backend/labs_smoke_test.py) bridge coding agents to UiPath APIs with strict real mode and mock mode. |
+
+### UiPath Components Not Claimed as Finished Runtime Packages
+
+| Component | Boundary |
 |---|---|
-| **UiPath Maestro / Agentic Process (BPMN)** | **Process Model:** Defines the intended lifecycle from memory retrieval through human review and approved/rejected outcomes. The portable model is in the repo and the final demo shows the UiPath BPMN design canvas. |
-| **UiPath Data Service** | **Collective Memory Storage:** Stores and serves the 4 Master Memory Files as structured entities (`CodeSoul`, `MinefieldHistory`, etc.), allowing programmatic retrieval and updates by the AI. |
-| **UiPath Action Center** | **Human Approval Gate:** Hosts the high-priority review task. The Python verifier reads the completed task and requires an explicit `Approved=true` decision. |
-| **UiPath Orchestrator API** | **Runtime Submission:** Submits the deployed process and exposes job records. The captured tenant showed submitted jobs in `Pending`; this repository does not claim a completed unattended runtime execution. |
+| **Agent Builder** | The repository includes an Agent Builder-style frontend mockup for demo storytelling, but the submitted working integration is not claimed as a packaged Agent Builder agent. |
+| **API Workflows** | API-style behavior is implemented in Python against UiPath APIs; no separately published UiPath API Workflow package is claimed. |
+| **Completed unattended Maestro runtime execution** | The BPMN model and process submission are documented, but the evidence does not claim a completed unattended runtime instance. |
 
 ## 🏆 Why This Wins
 
@@ -193,54 +233,117 @@ universal-agent-os-uipath/
 ```
 
 
+<a id="setup--execution"></a>
+
 ## 🚀 Setup & Execution
 
-### 1. Pre-requisites & Sanity Check
-Before running, verify that the Python backend compiles correctly:
-```bash
-python -m py_compile backend/sync_markdown_to_uipath.py backend/uipath_api_connector.py
+These steps let judges run the repository in either offline mock mode or strict real UiPath Automation Cloud mode.
+
+### 1. Clone and Install
+
+```powershell
+git clone https://github.com/zyganali-glitch/universal-agent-os-uipath.git
+cd universal-agent-os-uipath
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r backend\requirements.txt
 ```
-*(No output means successful compilation without syntax errors).*
 
-### 2. Demo Mode (Mock API)
-If you do not have UiPath tokens configured, explicitly enable Demo Mode (`UIPATH_MOCK_MODE="true"`).
-1. **Clone** this repository.
-2. **Open** `frontend/agent_builder_mockup.html` in your browser.
-3. **Select** a coding agent and type a nontechnical request (try: "I have an idea. Please help me turn it into a project.").
-4. **Click** "Start Maestro Process" and use the **Next Step** button to manually progress through the BPMN phases.
-5. **Run** `python backend/sync_markdown_to_uipath.py` to see the simulated syncing of local governance rules to Data Service.
+On macOS/Linux, activate the virtual environment with `source .venv/bin/activate` and use `/` instead of `\` in paths.
 
-### 3. Production Mode (Strict Real UiPath Automation Cloud)
-To connect to a real UiPath tenant, strict real mode must be enabled. **Strict mode never falls back to mock**, and will fail if the environment variables are missing.
-1. Set the environment variables:
-   ```bash
-   export UIPATH_MOCK_MODE="false"
-   export UIPATH_ORGANIZATION_NAME="your_organization_slug"
-   export UIPATH_TENANT_NAME="DefaultTenant"
-   export UIPATH_OU_ID="your_ou_id"
-   export UIPATH_ACCESS_TOKEN="your_oauth_token"
-   ```
-2. (Optional) Custom base URLs overrides if using custom cloud/orchestrator deployments:
-   ```bash
-   export UIPATH_ORCHESTRATOR_ODATA_URL="https://your_custom_orchestrator/odata"
-   export UIPATH_DATA_SERVICE_API_URL="https://your_custom_dataservice/dataservice_/api/EntityService"
-   export UIPATH_ACTION_CENTER_ODATA_URL="https://your_custom_actioncenter/odata"
-   ```
-3. Run the read-only readiness check:
-   ```bash
-   python backend/labs_smoke_test.py doctor
-   ```
-   All four entities must report `available: true`.
-4. Register the gate:
-   ```bash
-   python backend/labs_smoke_test.py register
-   ```
-5. Complete the generated Action Center task and check **I approve this plan and grant execution permission**.
-6. Verify the server-side decision:
-   ```bash
-   python backend/labs_smoke_test.py verify
-   ```
-   The verifier keeps execution blocked while the task is pending or rejected. `wait` can be used instead of `verify` to poll until completion.
+### 2. Validate the Repository Locally
+
+```powershell
+python -m py_compile backend\sync_markdown_to_uipath.py backend\uipath_api_connector.py backend\labs_smoke_test.py backend\phase0_interview.py
+python -m pytest
+```
+
+Expected result: compilation prints no errors, and the test suite passes.
+
+### 3. Run Offline Demo Mode
+
+Use this mode when you do not have a UiPath tenant or credentials available.
+
+```powershell
+Copy-Item .env.example .env
+$env:UIPATH_MOCK_MODE = "true"
+python backend\labs_smoke_test.py doctor
+python backend\labs_smoke_test.py register
+python backend\labs_smoke_test.py verify
+```
+
+Expected result: the commands return JSON marked as mock mode. `verify` returns an approved mock gate so the local flow can continue.
+
+You can also open [`frontend/agent_builder_mockup.html`](frontend/agent_builder_mockup.html) directly in a browser, select an agent, enter `I have an idea. Please help me turn it into a project.`, click **Start Maestro Process**, and step through the visual BPMN-style demo.
+
+### 4. Prepare a Real UiPath Tenant
+
+Strict real mode needs these UiPath prerequisites:
+
+1. A UiPath Automation Cloud tenant and folder / organization unit.
+2. Data Service entities created from [`uipath_project/entities`](uipath_project/entities): `CodeSoul`, `MinefieldHistory`, `Persona`, and `StateMemory`.
+3. Action Center enabled for the same tenant/folder.
+4. A deployed process release for `UniversalAgentOS_Phase0_Flow`, or a known `UIPATH_RELEASE_KEY`.
+5. Either a UiPath access token or OAuth client credentials with permission to read Data Service records, create/read Action Center tasks, and start Orchestrator jobs.
+
+### 5. Configure Strict Real Mode
+
+Copy `.env.example` to `.env`, then fill in the real values. Do not commit secrets.
+
+```dotenv
+UIPATH_MOCK_MODE=false
+UIPATH_ORGANIZATION_NAME=your_organization_slug
+UIPATH_TENANT_NAME=DefaultTenant
+UIPATH_OU_ID=your_folder_or_organization_unit_id
+UIPATH_ACCESS_TOKEN=your_oauth_token
+UIPATH_CLIENT_ID=
+UIPATH_CLIENT_SECRET=
+UIPATH_RELEASE_KEY=your_optional_release_key
+```
+
+Optional endpoint overrides are supported when the tenant uses custom URLs:
+
+```dotenv
+UIPATH_ORCHESTRATOR_ODATA_URL=https://your_custom_orchestrator/odata
+UIPATH_DATA_SERVICE_API_URL=https://your_custom_dataservice/dataservice_/api/EntityService
+UIPATH_ACTION_CENTER_ODATA_URL=https://your_custom_actioncenter/odata
+```
+
+### 6. Run the Real Approval Gate
+
+```powershell
+python backend\labs_smoke_test.py doctor
+```
+
+Expected result: JSON contains `"ready": true`, and all four Data Service entities show `"available": true`.
+
+```powershell
+python backend\labs_smoke_test.py register --task "Start a beginner-friendly Phase 0 project discovery interview"
+```
+
+Expected result: JSON contains `"success": true`, `"gate_status": "AWAITING_HUMAN"`, and a `task_id`.
+
+Open UiPath Action Center, find **Phase-0 Alignment Review**, check **I approve this plan and grant execution permission**, and submit the decision.
+
+```powershell
+python backend\labs_smoke_test.py verify
+```
+
+Expected result: JSON contains `"success": true` and `"gate_status": "APPROVED"`. If the task is still pending or rejected, the repository remains blocked and Phase-0 does not start.
+
+### 7. Start Phase-0 After Verified Approval
+
+```powershell
+python backend\phase0_interview.py start
+```
+
+The command returns the first beginner-friendly question. Answer one question at a time by running:
+
+```powershell
+python backend\phase0_interview.py answer --value "your answer here"
+```
+
+Continue until the command reports `PHASE0_COMPLETE`. Only then should an implementation plan be created.
 
 ---
 
